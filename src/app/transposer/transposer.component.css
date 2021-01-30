@@ -1,0 +1,49 @@
+p-picklist {
+    height: 500px;
+    max-height: 500px;
+}
+
+p-fileUpload {
+    display: inline-block;
+}
+
+.field {
+    margin: 5px;
+    display: inline-block;
+}
+
+.field label {
+    margin-right: 5px;
+}
+
+#transposer-form {
+    text-align: center;
+}
+
+#transposer-form legend {
+    text-align:center;
+    font-size: 120%;
+    font-weight: bold;
+    padding: 10px;
+}
+
+#transposer-page {
+    max-width: 800px;
+}
+
+.overlay {
+    /* Height & width depends on how you want to reveal the overlay (see JS below) */   
+    pointer-events: none;
+    background-color: black;
+    opacity: 0.75;
+    height: 100%;
+    width: 100%;
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+ }
+
+ .overlay .fa-spinner {
+    color: blue;
+ }
