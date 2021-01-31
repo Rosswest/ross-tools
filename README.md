@@ -2,6 +2,18 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 11.0.3.
 
+The project contains an assorted set of tools developed by Ross West (rosswest@hotmail.co.uk), including
+    - Ising Model - simulates ferromagnetism
+    - SIRS Model - simulates the spread of disease
+    - Data Transposer - for reordering data sets (e.g. XYZ -> ZXY)
+
+## Getting Started
+
+To run this project:
+    - Set up the local environment https://angular.io/guide/setup-local
+    - run 'npm install'
+    - run 'ng serve' to deploy a dev server to `http://localhost:4200/
+
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
