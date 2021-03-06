@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { worker } from 'cluster';
+import * as Papa from 'papaparse';
 
 @Component({
   selector: 'app-transposer',
@@ -7,16 +9,21 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TransposerComponent implements OnInit {
 
+  // inputs
   separator: string = ',';
   fieldCount: number = 3;
-  processing: boolean = false;
 
+  // outputs
+  outputLinesPerFile: number = 1000;
+  outputSeparator: string = ',';
+  outputExtension: string = 'csv';
+  
+  // selected fields
   allFields: any[] = []
   selectedFields: any[] = []
 
-  processedFile: string;
-  processedFileName: string;
-  showDownloadButton: boolean = false;
+  // page state
+  processing: boolean = false;
 
   constructor() { }
 
@@ -33,6 +40,7 @@ export class TransposerComponent implements OnInit {
         this.readFile(event.files[0]);
       }
     } catch (exception) {
+      console.error(exception);
       alert("There was a problem processing your file");
     }
 
@@ -62,12 +70,66 @@ export class TransposerComponent implements OnInit {
   }
 
   readFile(file: File) {
-      const reader = new FileReader();
-      reader.addEventListener('load', (event) => {
-        const desiredFileName = this.getDesiredFileName(file);
-        this.handleFileReadResult(event,desiredFileName);
-      });
-      reader.readAsText(file);
+    let count = 0;
+    const chunkSize = this.outputLinesPerFile;
+    const estimatedFileCount = Math.ceil(file.size/chunkSize);
+    const selectedFields = this.selectedFields;
+    const separator = this.separator;
+    const outputSeparator = this.outputSeparator;
+    const outputFileExtension = this.outputExtension;
+
+      Papa.parse(file, {
+        delimiter: separator,
+        skipEmptyLines:true,
+        chunkSize: chunkSize,
+        chunk: function (result, parser) {
+          parser.pause();
+
+          // handle the file reading
+          let desiredLines = [];
+          const lines: any[] = result.data;
+          for (const line of lines) {
+            const desiredTokens = [];
+
+            for (const field of selectedFields) {
+              let index = field.value;
+              let desiredToken = line[index];
+              desiredTokens.push(desiredToken);
+            }
+        
+            let desiredLine = desiredTokens.join(outputSeparator);
+            desiredLines.push(desiredLine);
+          }
+      
+          let desiredText = desiredLines.join('\r\n');
+          const processedFile = desiredText;
+          
+          // console.log("resultFile", processedFile);
+
+          count++;
+          console.log("hit chunk (" + count + "/" + estimatedFileCount + ") of length: ", result.data.length);
+          // const desiredFileName = this.getDesiredFileName(file);
+          const processedFileName = 'testFile_' + count + '_of_' + estimatedFileCount + '.' + outputFileExtension;
+          var blob = new Blob([processedFile], {type: 'text/csv'});
+          if(window.navigator.msSaveOrOpenBlob) {
+              window.navigator.msSaveBlob(blob, processedFileName);
+          }
+          else{
+              var elem = window.document.createElement('a');
+              elem.href = window.URL.createObjectURL(blob);
+              elem.download = processedFileName;        
+              document.body.appendChild(elem);
+              elem.click();        
+              document.body.removeChild(elem);
+          }
+
+          parser.resume();
+        },
+        complete: function (result, file) {
+            console.log("Completed parsing");
+        }
+    });
+   
   }
 
   getDesiredFileName(file: File) {
@@ -102,34 +164,8 @@ export class TransposerComponent implements OnInit {
     return result;
   }
 
-  handleFileReadResult(event: any, desiredFileName: string) {
-    const result = event.target.result;
-    console.log(event);
-    // const fileExtension;
-    // const fileName; 
-    const lines = result.match(/[^\r\n]+/g);
-    let desiredLines = [];
-
-    for (const line of lines) {
-      const desiredLine = this.createDesiredLine(line);
-      desiredLines.push(desiredLine);
-    }
-
-    console.log("original lines", lines);
-    console.log("desired lines", desiredLines);
-    alert(lines.length + " lines read");
-
-    let desiredText = desiredLines.join('\r\n');
-    this.processedFile = desiredText;
-    this.processedFileName = desiredFileName;
-    this.showDownloadButton = true;
-    
-    console.log("resultFile", this.processedFile);
-    console.log("name", this.processedFileName);
-  }
-
-  createDesiredLine(originalLine: string) {
-    const tokens = originalLine.split(this.separator);
+  createDesiredLine(tokens: string[]) {
+    // const tokens = originalLine.split(this.separator);
     const desiredTokens = [];
 
     for (const field of this.selectedFields) {
@@ -140,22 +176,6 @@ export class TransposerComponent implements OnInit {
 
     let desiredLine = desiredTokens.join(this.separator);
     return desiredLine;
-
-  }
-
-  downloadProcessedFile() {
-    var blob = new Blob([this.processedFile], {type: 'text/csv'});
-    if(window.navigator.msSaveOrOpenBlob) {
-        window.navigator.msSaveBlob(blob, this.processedFileName);
-    }
-    else{
-        var elem = window.document.createElement('a');
-        elem.href = window.URL.createObjectURL(blob);
-        elem.download = this.processedFileName;        
-        document.body.appendChild(elem);
-        elem.click();        
-        document.body.removeChild(elem);
-    }
   }
 
   toggleOverlay() {

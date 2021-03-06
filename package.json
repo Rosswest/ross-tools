@@ -26,7 +26,6 @@
     "@angular/platform-browser-dynamic": "~11.0.3",
     "@angular/router": "^11.0.5",
     "@types/event-stream": "^3.3.34",
-    "angular-fontawesome": "^1.0.0",
     "event-stream": "^4.0.1",
     "fs": "0.0.1-security",
     "primeicons": "^4.1.0",

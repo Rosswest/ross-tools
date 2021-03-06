@@ -7,6 +7,15 @@ p-fileUpload {
     display: inline-block;
 }
 
+::ng-deep p-fieldset {
+    max-width: 800px !important;
+    text-align: center !important;
+}
+
+::ng-deep fieldset {
+    max-width: 800px !important;
+    display:inline-block;
+}
 .field {
     margin: 5px;
     display: inline-block;
@@ -20,6 +29,11 @@ p-fileUpload {
     text-align: center;
 }
 
+#field-selection-container {
+    display: inline-block;
+    text-align: center;
+}
+
 #transposer-form legend {
     text-align:center;
     font-size: 120%;
@@ -28,7 +42,7 @@ p-fileUpload {
 }
 
 #transposer-page {
-    max-width: 800px;
+    text-align:center
 }
 
 .overlay {

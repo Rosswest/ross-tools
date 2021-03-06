@@ -1,36 +1,59 @@
-<div class="overlay">
+<div class="overlay" *ngIf="processing">
     <i class="fas fa-spin fa-spinner"></i>
     <p>Loading</p>
 </div>
 <div id="transposer-page">
     <form id="transposer-form" [ngClass]="{'disabled': processing}">
         <legend>Data Transposer</legend>
-        <div id="field-selection-container">
-            <p-pickList [source]="allFields" [target]="selectedFields" [dragdrop]="true" sourceHeader="Available" targetHeader="Selected">
-                <ng-template let-field pTemplate="field">
-                        <div>{{field.label}}</div>
-                </ng-template>
-            </p-pickList>
-        </div>
-        <div class="ui-grid-row">
-            <div class="field">
-                <label for="separatorInput">Separator</label>
-                <input pInputText type="text" name="separatorInput" [(ngModel)]="separator"><br>
-            </div>
-            <div class="field">
-                <label for="fieldCountInput">Field Count</label>
-                <p-inputNumber min="1" name="fieldCountInput" [(ngModel)]="fieldCount" (ngModelChange)="updateSelectableFields()"></p-inputNumber>
-            </div>
-            <button pButton type="button" (click)="toggleOverlay()" label="Overlay"></button>
 
+        <!-- Field Selector -->
+        <div class="ui-grid-row">
+            <div id="field-selection-container">
+                <p-pickList [source]="allFields" [target]="selectedFields" [dragdrop]="true" sourceHeader="Available" targetHeader="Selected">
+                    <ng-template let-field pTemplate="field">
+                            <div>{{field.label}}</div>
+                    </ng-template>
+                </p-pickList>
+            </div>
+        </div>
+
+        <!-- Inputs -->
+        <div class="ui-grid-row">
+            <p-fieldset disabled="running" legend="Input">
+                <div class="ui-grid-row">
+                    <div class="field">
+                        <label for="separatorInput">Separator</label>
+                        <input pInputText type="text" name="separatorInput" [(ngModel)]="separator"><br>
+                    </div>
+                    <div class="field">
+                        <label for="fieldCountInput">Field Count</label>
+                        <p-inputNumber min="1" name="fieldCountInput" [(ngModel)]="fieldCount" (ngModelChange)="updateSelectableFields()"></p-inputNumber>
+                    </div>
+                </div>
+            </p-fieldset>
+        </div>
+
+        <!-- Outputs -->
+        <div class="ui-grid-row">
+            <p-fieldset disabled="running" legend="Output">
+                <div class="ui-grid-row">
+                    <div class="field">
+                        <label for="outputLinesPerFile">Lines Per File</label>
+                        <p-inputNumber min="1" name="outputLinesPerFile" [(ngModel)]="outputLinesPerFile"></p-inputNumber>
+                    </div>
+                    <div class="field">
+                        <label for="outputSeparator">Separator</label>
+                        <input pInputText type="text" name="outputSeparator" [(ngModel)]="outputSeparator"><br>
+                    </div>
+                    <div class="field">
+                        <label for="outputLinesPerFile">File Extension</label>
+                        <input pInputText type="text" name="outputExtension" [(ngModel)]="outputExtension"><br>
+                    </div>
+                </div>
+            </p-fieldset>
         </div>
         <div class="field">
             <p-fileUpload #uploader name="fileInput" [showUploadButton]="true" [showCancelButton]="false" uploadLabel="Process" customUpload="true" (uploadHandler)="handleFileUpload($event)">
-                <ng-template pTemplate="toolbar">
-                    <button pButton type="button" [disabled]="!showDownloadButton" label="Results"
-                    (click)="downloadProcessedFile()">
-                    </button>
-                </ng-template> 
             </p-fileUpload>
         </div>
     </form>
