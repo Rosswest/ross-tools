@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {MenuItem} from 'primeng/api';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -8,13 +8,17 @@ import {MenuItem} from 'primeng/api';
 })
 export class AppComponent implements OnInit {
   title = 'depictor';
-  menuItems: MenuItem[];
+  menuItems: any[];
+
+
+  constructor() {}
 
   ngOnInit() {
     this.menuItems = [
-      {label: 'Ising', icon: 'pi pi-fw pi-calendar'},
-      {label: 'SIRS', icon: 'pi pi-fw pi-pencil'},
-      {label: 'Transposer', icon: 'pi pi-fw pi-file'}
-    ];  }
+      {label: 'Ising', routerLink: ['ising'], icon: 'pi pi-fw pi-calendar'},
+      {label: 'SIRS', routerLink: ['sirs'] ,icon: 'fa fa-pump-medical'},
+      {label: 'Transposer', routerLink: ['transposer'] ,icon: 'pi pi-fw pi-file'}
+    ];  
+  }
 
 }

@@ -6,6 +6,8 @@ import { AppComponent } from './app.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {TabMenuModule} from 'primeng/tabmenu';
+import { HttpClientModule } from '@angular/common/http';
+
 @NgModule({
   declarations: [
     AppComponent
@@ -16,7 +18,8 @@ import {TabMenuModule} from 'primeng/tabmenu';
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    TabMenuModule
+    TabMenuModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
