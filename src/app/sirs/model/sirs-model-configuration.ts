@@ -1,8 +1,8 @@
 export class SirsModelConfiguration {
 
-    public static readonly DEFAULT_SUSCEPTIBLE_TO_INFECTED_PROBABILITY = 0.5;
-    public static readonly DEFAULT_INFECTED_TO_RECOVERED_PROBABILITY = 0.1;
-    public static readonly DEFAULT_RECOVERED_TO_SUSCEPTIBLE_PROBABILITY = 0.01;
+    public static readonly DEFAULT_SUSCEPTIBLE_TO_INFECTED_PROBABILITY = 0.7;
+    public static readonly DEFAULT_INFECTED_TO_RECOVERED_PROBABILITY = 0.6
+    public static readonly DEFAULT_RECOVERED_TO_SUSCEPTIBLE_PROBABILITY = 0.1;
 
     susceptibleToInfectedProbability: number;
     infectedToRecoveredProbability: number;
