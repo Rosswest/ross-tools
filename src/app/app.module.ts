@@ -4,11 +4,8 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { IsingModule } from './ising/ising.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { SirsModule } from './sirs/sirs.module';
-import { TransposerModule } from './transposer/transposer.module';
-
+import {TabMenuModule} from 'primeng/tabmenu';
 @NgModule({
   declarations: [
     AppComponent
@@ -16,12 +13,10 @@ import { TransposerModule } from './transposer/transposer.module';
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    IsingModule,
-    SirsModule,
-    TransposerModule,
     AppRoutingModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    TabMenuModule
   ],
   providers: [],
   bootstrap: [AppComponent]
