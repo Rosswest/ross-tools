@@ -6,7 +6,13 @@
     border-radius: 12px;
     padding: 10px;
     padding-bottom: 5px;
+    padding-top: 20px;
     border-color: black;
+}
+
+.navigation-panel.disabled {
+    opacity: 0.25;
+    pointer-events: none;
 }
 
 .navigation-panel {

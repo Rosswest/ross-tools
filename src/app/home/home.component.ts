@@ -1,22 +1,27 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+    selector: 'app-home',
+    templateUrl: './home.component.html',
+    styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit {
-  title = 'depictor';
-  menuItems: any[];
+export class HomeComponent {
+    title = 'depictor';
+    menuItems: any[];
+    navigating: boolean = false;
+    navigatingTo: string = null;
+
+    constructor(private router: Router) { }
 
 
-  constructor(private router: Router) {}
-
-  ngOnInit() {}
-
-  navigateToPage(path: string) {
-      this.router.navigate([path]);
-  }
+    navigateTo(path: string) {
+        //prevent multiple navigation attempts
+        if (!this.navigating) {
+            this.navigating = true;
+            this.navigatingTo = path;
+            this.router.navigate([path]);
+        }
+    }
 
 }
