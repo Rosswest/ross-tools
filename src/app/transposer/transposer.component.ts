@@ -14,7 +14,7 @@ export class TransposerComponent implements OnInit {
   fieldCount: number = 3;
 
   // outputs
-  outputLinesPerFile: number = 1000;
+  kbPerChunk: number = 1000;
   outputSeparator: string = ',';
   outputExtension: string = 'csv';
   
@@ -50,28 +50,19 @@ export class TransposerComponent implements OnInit {
     this.allFields = [];
 
     for (let i = 0 ; i < this.fieldCount; i++) {
-      const label = 'Field ' + i;
+      const label = 'Field ' + (i+1);
       const value = i;
       const item = {label: label, value: value};
       this.allFields.push(item);
     }
 
     this.selectedFields = [];
-    // for (let i = 0; i < this.selectedFields.length; i++) {
-    //   const selected = this.selectedFields[i];
-    //   if (selected.value >= this.fieldCount) {
-    //     this.selectedFields.splice(i,1);
-    //     console.log("removing element at " + i, selected);
-    //   }
-    // }
-
-    console.log("all fields", this.allFields);
-    console.log("selected fields", this.selectedFields);
   }
 
   readFile(file: File) {
     let count = 0;
-    const chunkSize = this.outputLinesPerFile;
+  
+    const chunkSize = Math.ceil(1024 * this.kbPerChunk);
     const estimatedFileCount = Math.ceil(file.size/chunkSize);
     const selectedFields = this.selectedFields;
     const separator = this.separator;
@@ -111,6 +102,7 @@ export class TransposerComponent implements OnInit {
           // const desiredFileName = this.getDesiredFileName(file);
           const processedFileName = 'testFile_' + count + '_of_' + estimatedFileCount + '.' + outputFileExtension;
           var blob = new Blob([processedFile], {type: 'text/csv'});
+          console.log("    writing " + processedFile.length + " lines");
           if(window.navigator.msSaveOrOpenBlob) {
               window.navigator.msSaveBlob(blob, processedFileName);
           }

@@ -9,6 +9,7 @@ import {FileUploadModule} from 'primeng/fileupload';
 import {HttpClientModule} from '@angular/common/http';
 import {InputTextModule} from 'primeng/inputtext';
 import {InputNumberModule} from 'primeng/inputnumber';
+import {TooltipModule} from 'primeng/tooltip';
 
 @NgModule({
   declarations: [TransposerComponent],
@@ -22,7 +23,8 @@ import {InputNumberModule} from 'primeng/inputnumber';
     FileUploadModule,
     HttpClientModule,
     InputTextModule,
-    InputNumberModule
+    InputNumberModule,
+    TooltipModule
   ]
 })
 export class TransposerModule { }

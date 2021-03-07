@@ -38,16 +38,16 @@
             <p-fieldset disabled="running" legend="Output">
                 <div class="ui-grid-row">
                     <div class="field">
-                        <label for="outputLinesPerFile">Lines Per File</label>
-                        <p-inputNumber min="1" name="outputLinesPerFile" [(ngModel)]="outputLinesPerFile"></p-inputNumber>
-                    </div>
-                    <div class="field">
                         <label for="outputSeparator">Separator</label>
                         <input pInputText type="text" name="outputSeparator" [(ngModel)]="outputSeparator"><br>
                     </div>
                     <div class="field">
                         <label for="outputLinesPerFile">File Extension</label>
                         <input pInputText type="text" name="outputExtension" [(ngModel)]="outputExtension"><br>
+                    </div>
+                    <div class="field" pTooltip="Affects output file size. One chunk is turned into one output file.">
+                        <label for="kbPerChunk">Kilobytes Per Chunk</label>
+                        <p-inputNumber min="1" name="kbPerChunk" [(ngModel)]="kbPerChunk"></p-inputNumber>
                     </div>
                 </div>
             </p-fieldset>
