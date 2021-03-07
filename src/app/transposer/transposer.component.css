@@ -34,9 +34,9 @@ p-fileUpload {
     text-align: center;
 }
 
-#transposer-form legend {
+::ng-deep #transposer-form legend {
     text-align:center;
-    font-size: 120%;
+    font-size: 110%;
     font-weight: bold;
     padding: 10px;
 }
