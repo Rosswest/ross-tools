@@ -1,0 +1,33 @@
+.navigation-panel {
+    display: inline-block;
+    margin: 10px;
+    text-align: center;
+    border: 4px solid;
+    border-radius: 12px;
+    padding: 10px;
+    padding-bottom: 5px;
+    border-color: black;
+}
+
+.navigation-panel {
+    transition: 0.5s;
+    color: black;
+    border-color: black;
+}
+
+.navigation-panel:hover,
+.navigation-panel:active {
+    color: rgb(0,127,165);;
+    border-color: rgb(0,127,165);
+    transition: 0.5s;
+    cursor: pointer;
+}
+
+.navigation-panel .page-label {
+    font-weight: bold;
+}
+
+.navigation-panel i {
+    width: 100%;
+    font-size: 48px;
+}
