@@ -9,9 +9,7 @@ export class DepictionComponent implements OnInit {
 
   public smiles: string;
 
-  constructor(smiles: string) {
-    this.smiles = smiles;
-   }
+  constructor() {}
 
   ngOnInit(): void {
   }
