@@ -2,7 +2,7 @@
 
 Demo can be viewed at https://rosswest.github.io/ross-tools/
 For files to use with the transposer you can:
-* Using 'demo_file.csv' included in this repository
+* Use 'demo_file.csv' included in this repository
 * Use https://github.com/Rosswest/csv-gen to generate a larger demo csv file
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 11.0.3.
