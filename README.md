@@ -2,22 +2,22 @@
 
 Demo can be viewed at https://rosswest.github.io/ross-tools/
 For files to use with the transposer you can:
-    - Using 'demo_file.csv' included in this repository
-    - Use https://github.com/Rosswest/csv-gen to generate a larger demo csv file
+* Using 'demo_file.csv' included in this repository
+* Use https://github.com/Rosswest/csv-gen to generate a larger demo csv file
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 11.0.3.
 
 The project contains an assorted set of tools developed by Ross West (rosswest@hotmail.co.uk), including
-    - Ising Model - simulates ferromagnetism
-    - SIRS Model - simulates the spread of disease
-    - Data Transposer - for reordering data sets (e.g. XYZ -> ZXY)
+* Ising Model - simulates ferromagnetism
+* SIRS Model - simulates the spread of disease
+* Data Transposer - for reordering data sets (e.g. XYZ -> ZXY)
 
 ## Getting Started
 
 To run this project:
-    - Set up the local environment https://angular.io/guide/setup-local
-    - run 'npm install'
-    - run 'ng serve' to deploy a dev server to `http://localhost:4200/
+* Set up the local environment https://angular.io/guide/setup-local
+* run 'npm install'
+* run 'ng serve' to deploy a dev server to `http://localhost:4200/
 
 ## Development server
 
