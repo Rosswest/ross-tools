@@ -1,0 +1,1 @@
+(window.webpackJsonp=window.webpackJsonp||[]).push([[5],{"2ENK":function(n,t,o){"use strict";o.r(t),o.d(t,"CellularPottsModule",function(){return i});var r=o("ofXK"),e=o("3Pt+"),u=o("fk4S"),c=o("arFO"),s=o("fXoL");let i=(()=>{class n{}return n.\u0275mod=s.Ib({type:n}),n.\u0275inj=s.Hb({factory:function(t){return new(t||n)},imports:[[r.b,e.c,e.j,u.b,c.b]]}),n})()}}]);
