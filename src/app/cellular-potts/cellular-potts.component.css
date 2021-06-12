@@ -1,0 +1,50 @@
+.row {
+    margin-bottom: 5px;
+}
+
+.canvas-container canvas {
+    width: 600px;
+    height: 600px;
+    border: 1px solid;
+}
+
+.canvas-side,
+.options-side {
+    max-width: 50%;
+    float:left;
+    display: inine-block;
+    padding: 10px;
+}
+
+.disabled {
+    pointer-events: none;
+    opacity: 0.75;
+}
+
+.simulation-container button {
+    margin-right: 5px;
+    width: 50px;
+    border: 1px solid #c8c8c8;
+}
+
+
+.stats-container p {
+    margin: 5px;
+    width: 50px;
+}
+
+.options-container .row input,
+.options-container .row p-dropdown {
+    margin-left: 5px;
+}
+
+.options-container,
+.stats-container {
+    margin-top: 5px;
+}
+
+::ng-deep p-dropdown .p-dropdown-label.p-inputtext { 
+    padding: 0px !important;
+    padding-left: 2px !important;
+    font-size: 14px;
+}
