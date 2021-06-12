@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { IsingModel } from './model/ising-model';
 import { IsingModelDynamics } from './model/ising-model-dynamics';
 import { IsingState } from './model/ising-state';
@@ -8,7 +8,7 @@ import { IsingState } from './model/ising-state';
   templateUrl: './ising.component.html',
   styleUrls: ['./ising.component.css']
 })
-export class IsingComponent implements OnInit {
+export class IsingComponent implements OnInit, OnDestroy {
 
   /* Visualization parameters */
   @ViewChild('canvas', { static: true }) 
@@ -33,7 +33,7 @@ export class IsingComponent implements OnInit {
   interactionStrength: number; // i.e. J
   period: number; // ticks every N seconds
   frequency: number; // number of ticks per second
-  dynamics: IsingModelDynamics; // method of determining sites to flip
+  dynamics: any; // method of determining sites to flip
   updatesPerTick: number; // how many site flips to attempt every tick
   totalEnergy: number;
   totalEnergyString: string;
@@ -46,8 +46,14 @@ export class IsingComponent implements OnInit {
 
   constructor() { }
 
+  ngOnDestroy(): void {
+    // kill the timer to ensure any running tasks end
+    clearInterval(this.timer);
+  }
+
   ngOnInit(): void {
     this.isingModel = new IsingModel(this.candidateSize, this.candidateSize);
+    this.dynamics = this.dynamicsOptions[0];
     this.modelWidth = this.candidateSize;
     this.modelHeight = this.candidateSize;
     this.temperature = this.isingModel.getTemperature();
@@ -135,6 +141,8 @@ export class IsingComponent implements OnInit {
 
   applySettings() {
     this.logConfig();
+    console.log(this.dynamics);
+    this.isingModel.setDynamics(this.dynamics.value);
     this.isingModel.setTemperature(this.temperature);
     this.isingModel.setBoltzmannConstant(this.boltzmann);
     this.isingModel.setInteractionStrength(this.interactionStrength);

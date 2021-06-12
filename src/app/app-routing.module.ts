@@ -16,7 +16,7 @@ const routes: Routes = [
   {path: 'cellular-potts', component: CellularPottsComponent, loadChildren: () => import('./cellular-potts/cellular-potts.module').then(m => m.CellularPottsModule)},
   {path: 'sirs', component: SirsComponent, loadChildren: () => import('./sirs/sirs.module').then(m => m.SirsModule)},
   {path: 'transposer', component: TransposerComponent, loadChildren: () => import('./transposer/transposer.module').then(m => m.TransposerModule)},
-  {path: '', component: HomeComponent}
+  {path: '', component: HomeComponent, pathMatch: 'full'}
 ];
 
 @NgModule({

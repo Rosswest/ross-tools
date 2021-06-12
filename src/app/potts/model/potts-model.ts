@@ -1,42 +1,45 @@
-import { IsingCell } from "./ising-cell";
-import { IsingModelDynamics } from "./ising-model-dynamics";
-import { IsingState } from "./ising-state";
+import { PottsCell } from "./potts-cell";
+import { PottsModelDynamics } from "./potts-model-dynamics";
 
-export class IsingModel {
+export class PottsModel {
 
     public static readonly BOLTZMANN_CONSTANT: number = 1.38064852e-23;
     public static readonly DEFAULT_TEMPERATURE: number = 0.5;
     public static readonly DEFAULT_INTERACTION_STRENGTH: number = 0.05;
     public static readonly DEFAULT_UPDATES_PER_TICK: number = 1000;
+    public static readonly DEFAULT_NUMBER_OF_STATES: number = 4;
 
     /* Simulation Parameters */
     private temperature: number; // i.e. T
     private boltzmann: number; // i.e. K
     private interactionStrength: number; // i.e. J
     private updatesPerTick: number;
-    private dynamics: IsingModelDynamics;
+    private numberOfStates: number;
+    private dynamics: PottsModelDynamics;
 
     /* Data Model Parameters */
     width: number;
     height: number;
-    sites: IsingCell[][];
+    sites: PottsCell[][];
     ticks: number;
 
-    constructor(width: number, height: number) {
+    constructor(width: number, height: number, numberOfStates: number) {
         this.width =  Math.floor(width);
         this.height =  Math.floor(height);
         this.resetSettings();
+        this.numberOfStates = numberOfStates;
         this.ticks = 0;
         this.sites = this.createInitialSites();
         this.populateNeighbourAwareness();
     }
 
     resetSettings() {
-        this.temperature = IsingModel.DEFAULT_TEMPERATURE;
-        this.boltzmann = IsingModel.BOLTZMANN_CONSTANT;
-        this.interactionStrength = IsingModel.DEFAULT_INTERACTION_STRENGTH;
-        this.updatesPerTick = IsingModel.DEFAULT_UPDATES_PER_TICK;
-        this.dynamics = IsingModelDynamics.GLAUBER;
+        this.temperature = PottsModel.DEFAULT_TEMPERATURE;
+        this.boltzmann = PottsModel.BOLTZMANN_CONSTANT;
+        this.interactionStrength = PottsModel.DEFAULT_INTERACTION_STRENGTH;
+        this.updatesPerTick = PottsModel.DEFAULT_UPDATES_PER_TICK;
+        this.numberOfStates = PottsModel.DEFAULT_NUMBER_OF_STATES;
+        this.dynamics = PottsModelDynamics.GLAUBER;
     }
 
     /**
@@ -47,18 +50,17 @@ export class IsingModel {
 
         for (let y = 0; y < this.height; y++) {
             for (let x = 0; x < this.width; x++) {
-                const target: IsingCell = this.sites[y][x];
+                const target: PottsCell = this.sites[y][x];
                 const energy: number = this.calculateCellEnergy(target);
                 totalEnergy += energy;
             }
         }
-
         return totalEnergy;
     }
 
-    calculateCellEnergy(target: IsingCell): number {
+    calculateCellEnergy(target: PottsCell): number {
         let cellEnergy: number = 0;
-        const targetState: IsingState = target.getState();
+        const targetState: number = target.getState();
         const neighbours = target.getNeighbours();
             
         for (const neighbour of neighbours) {
@@ -73,13 +75,12 @@ export class IsingModel {
     /**
      * Creates the initial lattice without neighbour awareness and returns it
      */
-    createInitialSites(): IsingCell[][] {
-        const sites: IsingCell[][] = [];
-
+    createInitialSites(): PottsCell[][] {
+        const sites: PottsCell[][] = [];
         for (let y = 0; y < this.height; y++) {
-            const row: IsingCell[] = [];
+            const row: PottsCell[] = [];
             for (let x = 0; x < this.width; x++) {
-                const cell = this.createRandomIsingCell();
+                const cell = this.createRandomPottsCell();
                 row.push(cell);
             }
             sites.push(row);
@@ -89,16 +90,11 @@ export class IsingModel {
     }
 
     /**
-     * Creates an Ising Cell with a random spin (either up or down)
+     * Creates an Potts Cell with a random spin (either up or down)
      */
-    createRandomIsingCell(): IsingCell {
-        let cellState = IsingState.UP;
-        let r = Math.random();
-        if (r < 0.5) {
-            cellState = IsingState.DOWN;
-        }
-
-        const cell = new IsingCell(cellState);
+    createRandomPottsCell(): PottsCell {
+        const state = this.randomInteger(0, this.numberOfStates-1);
+        const cell = new PottsCell(state);
         return cell;
 
     }
@@ -112,8 +108,8 @@ export class IsingModel {
 
         for (let y = 0; y < this.height; y++) {
             for (let x = 0; x < this.width; x++) {
-                let neighbourSet = new Set<IsingCell>();
-                const target: IsingCell = this.sites[y][x];
+                let neighbourSet = new Set<PottsCell>();
+                const target: PottsCell = this.sites[y][x];
                 const leftX = (x <= xMin) ? x+1 : x-1;
                 const rightX = (x >= xMax) ? x-1 : x+1;
                 const topY = (y <= yMin) ? y+1 : y-1;
@@ -166,22 +162,28 @@ export class IsingModel {
         this.updatesPerTick = updatesPerTick;
     }
 
-    public setDynamics(dynamics: IsingModelDynamics): void {
+    public getNumberOfStates(): number {
+        return this.numberOfStates;
+    }
+
+    public setNumberOfStates(numberOfStates: number): void {
+        this.numberOfStates = numberOfStates;
+    }
+
+    public setDynamics(dynamics: PottsModelDynamics): void {
         this.dynamics = dynamics;
     }
 
-    public getDynamics(): IsingModelDynamics {
+    public getDynamics(): PottsModelDynamics {
         return this.dynamics;
     }
 
     public updateModel(attempts: number) {
         switch (this.dynamics) {
-            case IsingModelDynamics.GLAUBER:
-                console.log("glauber");
+            case PottsModelDynamics.GLAUBER:
                 this.updateWithGlauberDynamics(attempts);
                 break;
-            case IsingModelDynamics.KAWASAKI:
-                console.log("kawasaki");
+            case PottsModelDynamics.KAWASAKI:
                 this.updateWithKawasakiDynamics(attempts);
                 break;
         }
@@ -193,26 +195,46 @@ export class IsingModel {
     private updateWithGlauberDynamics(attempts: number) {
         for (let i = 0; i < attempts; i++) {
 
-            // calculate probability of change given the energy
-            const target: IsingCell = this.getRandomCell();
-            const energyDifference = this.getEnergyDifferenceFromFlipingCell(target);
-            this.attemptGlauberFlip(target, energyDifference);
+            const cell: PottsCell = this.getRandomCell();
+
+            let neighbourStates = new Set<number>();
+            for (let neighbour of cell.getNeighbours()) {
+                const state = neighbour.getState();
+                neighbourStates.add(state);
+            }
+    
+            let nonIdenticalStates = [];
+            for (const state of neighbourStates) {
+                if (state !== cell.getState()) {
+                    nonIdenticalStates.push(state);
+                }
+            }
+    
+            // attempt to flip to the neighbouring state if appropriate
+            const hasNonIdenticalNeighbour = (nonIdenticalStates.length > 0);
+            if (hasNonIdenticalNeighbour) {
+                const chosenIndex = this.randomInteger(0, nonIdenticalStates.length-1);
+                const targetState = nonIdenticalStates[chosenIndex];
+                const energyDifference = this.getEnergyDifferenceFromFlipingCell(cell, targetState);
+                this.attemptGlauberFlip(cell, targetState, energyDifference);
+            }
             this.ticks++;
         }
     }
 
-    private attemptGlauberFlip(cell: IsingCell, energyDifference: number) {
+    private attemptGlauberFlip(cell: PottsCell, newState: number, energyDifference: number) {
         const probabilityOfFlip = this.getFlipProbability(energyDifference);
 
         // attempt the flip
         const roll = Math.random();
-        if (roll < probabilityOfFlip) {
-            const flippedState = this.getFlippedState(cell.getState());
-            cell.setState(flippedState);
+        if (roll < probabilityOfFlip) {;
+            cell.setState(newState);
         }
+        
+
     }
 
-    private attemptKawasakiFlip(firstCell: IsingCell, secondCell: IsingCell, energyDifference: number) {
+    private attemptKawasakiFlip(firstCell: PottsCell, secondCell: PottsCell, energyDifference: number) {
         const probabilityOfFlip = this.getFlipProbability(energyDifference);
 
         // attempt the flip
@@ -221,15 +243,14 @@ export class IsingModel {
             //swap the states of the two cells
             const firstState = firstCell.getState();
             const secondState = secondCell.getState();
-            firstCell.setState(this.getFlippedState(firstState));
-            secondCell.setState(this.getFlippedState(secondState));
+            firstCell.setState(secondState);
+            secondCell.setState(firstState);
         }
     }
 
-    private getEnergyDifferenceFromFlipingCell(cell: IsingCell) {
+    private getEnergyDifferenceFromFlipingCell(cell: PottsCell, newState: number) {
         const neighbours = cell.getNeighbours();
         const initialState = cell.getState();
-        const flippedState = this.getFlippedState(initialState);
         let initialEnergy: number = 0;
         let flippedEnergy: number = 0;
         
@@ -238,7 +259,7 @@ export class IsingModel {
             const neighbourState = neighbour.getState();
             const initialEnergyContribution = this.calculateCellPairEnergy(initialState, neighbourState);
             initialEnergy += initialEnergyContribution;
-            const flippedEnergyContribution = this.calculateCellPairEnergy(flippedState, neighbourState);
+            const flippedEnergyContribution = this.calculateCellPairEnergy(newState, neighbourState);
             flippedEnergy += flippedEnergyContribution;
         }
 
@@ -253,18 +274,10 @@ export class IsingModel {
         return probability;
 
     }
-    private getFlippedState(state: IsingState) {
-        switch (state) {
-            case IsingState.UP:
-                return IsingState.DOWN;
-            case IsingState.DOWN:
-                return IsingState.UP;
-        }
-    }
 
     /* Calculates the resulting energy of two adjacent cells */
-    private calculateCellPairEnergy(firstState: IsingState, secondState: IsingState) {
-        const energy = -1.0 * this.interactionStrength * firstState * secondState;
+    private calculateCellPairEnergy(firstState: number, secondState: number) {
+        const energy = -1.0 * this.interactionStrength * this.kroneckerDelta(firstState,secondState);
         // console.log("energy calculation", this.interactionStrength, firstState, secondState, energy);
         return energy;
     }
@@ -276,8 +289,8 @@ export class IsingModel {
         for (let i = 0; i < attempts; i++) {
             // select two random cells to swap the states of (not the same cell)
             let sameCell = true;
-            let firstCell: IsingCell = null;
-            let secondCell: IsingCell = null;
+            let firstCell: PottsCell = null;
+            let secondCell: PottsCell = null;
             while (sameCell) {
                 firstCell = this.getRandomCell();
                 secondCell = this.getRandomCell();
@@ -287,8 +300,8 @@ export class IsingModel {
             // don't bother calculating if they both have the same state
             const sameState = (firstCell.getState() == secondCell.getState());
             if (!sameState) {
-                const firstCellFlipContribution = this.getEnergyDifferenceFromFlipingCell(firstCell);
-                const secondCellFlipContribution = this.getEnergyDifferenceFromFlipingCell(secondCell);
+                const firstCellFlipContribution = this.getEnergyDifferenceFromFlipingCell(firstCell, secondCell.getState());
+                const secondCellFlipContribution = this.getEnergyDifferenceFromFlipingCell(secondCell, firstCell.getState());
                 const energyDifference = firstCellFlipContribution + secondCellFlipContribution;
                 this.attemptKawasakiFlip(firstCell, secondCell, energyDifference);
             }
@@ -302,13 +315,21 @@ export class IsingModel {
         const yMax: number = this.height - 1;
         const x = this.randomInteger(0,xMax);
         const y = this.randomInteger(0,yMax);
-        const target: IsingCell = this.sites[y][x];
+        const target: PottsCell = this.sites[y][x];
         return target;
     }
 
 
     private randomInteger(min:number, max:number) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
-      }
+    }
+
+    kroneckerDelta(firstState: number, secondState: number) {
+        if (firstState == secondState) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
 
 }

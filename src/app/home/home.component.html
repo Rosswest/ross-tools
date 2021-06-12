@@ -1,14 +1,20 @@
 <div class="ui-grid-row">
-    <div id="sirs-panel" class="navigation-panel">
-        <i class="pi pi-fw pi-chart-bar"></i>
+
+    <p>The following tools have been tested in chrome and may not be supported by other browsers.</p>
+
+    <div [ngClass]="{'disabled': navigating && navigatingTo != 'sirs' }" id="sirs-panel" class="navigation-panel" (click)="navigateTo('sirs')">
+        <i *ngIf="navigatingTo != 'sirs'" class="pi pi-fw pi-chart-bar"></i>
+        <i *ngIf="navigatingTo === 'sirs'" class="pi pi-fw pi-spinner pi-spin"></i>
         <p class="page-label">SIRS Simulator</p>
     </div>
-    <div id="ising-panel" class="navigation-panel">
-        <i class="pi pi-fw pi-th-large"></i>
+    <div [ngClass]="{'disabled': navigating && navigatingTo != 'ising' }" id="ising-panel" class="navigation-panel" (click)="navigateTo('ising')">
+        <i *ngIf="navigatingTo != 'ising'" class="pi pi-fw pi-th-large"></i>
+        <i *ngIf="navigatingTo === 'ising'" class="pi pi-fw pi-spinner pi-spin"></i>
         <p class="page-label">Ising Simulator</p>
     </div>
-    <div id="transposer-panel" class="navigation-panel">
-        <i class="pi pi-fw pi-file"></i>
+    <div [ngClass]="{'disabled': navigating && navigatingTo != 'transposer' }" id="transposer-panel" class="navigation-panel" (click)="navigateTo('transposer')">
+        <i *ngIf="navigatingTo != 'transposer'" class="pi pi-fw pi-file"></i>
+        <i *ngIf="navigatingTo === 'transposer'" class="pi pi-fw pi-spinner pi-spin"></i>
         <p class="page-label">Data Transposer</p>
     </div>
 </div>

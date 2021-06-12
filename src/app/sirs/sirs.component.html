@@ -6,6 +6,19 @@
         </div>
     </div>
     <div class="options-side">
+        <div class="explanation-container">
+            <p-fieldset legend="Information">
+                <p>The SIRS model is a model of disease transmission. The model is governed by a cycle of states:</p>
+                <div id="sirs-image-container">
+                    <div class="image-container"><img src="assets/equations/sirs-first.svg"></div>
+                    <div class="image-container"><img src="assets/equations/sirs-second.svg"></div>
+                </div>
+                Each transition has an associated probability used to control the behaviour of the model:
+                <div id="sirs-image-container">
+                    <div class="image-container"><img src="assets/equations/sirs-probabilities.svg"></div>
+                </div>
+            </p-fieldset>
+        </div>
         <div class="stats-container">
             <p-fieldset legend="Simulation">
                 <div><span>Ticks:  {{frame}}</span></div>
