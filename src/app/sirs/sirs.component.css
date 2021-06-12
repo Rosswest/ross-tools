@@ -1,3 +1,7 @@
+.row {
+    margin-top: 5px;
+}
+
 .canvas-container canvas {
     width: 600px;
     height: 600px;
@@ -9,7 +13,7 @@
     max-width: 50%;
     float:left;
     display: inine-block;
-    margin: 10px;
+    padding: 10px;
 }
 
 .disabled {

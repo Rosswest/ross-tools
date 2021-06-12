@@ -23,10 +23,11 @@ export class PottsModel {
     sites: PottsCell[][];
     ticks: number;
 
-    constructor(width: number, height: number) {
+    constructor(width: number, height: number, numberOfStates: number) {
         this.width =  Math.floor(width);
         this.height =  Math.floor(height);
         this.resetSettings();
+        this.numberOfStates = numberOfStates;
         this.ticks = 0;
         this.sites = this.createInitialSites();
         this.populateNeighbourAwareness();
@@ -54,7 +55,6 @@ export class PottsModel {
                 totalEnergy += energy;
             }
         }
-
         return totalEnergy;
     }
 
@@ -77,7 +77,6 @@ export class PottsModel {
      */
     createInitialSites(): PottsCell[][] {
         const sites: PottsCell[][] = [];
-
         for (let y = 0; y < this.height; y++) {
             const row: PottsCell[] = [];
             for (let x = 0; x < this.width; x++) {
@@ -182,11 +181,9 @@ export class PottsModel {
     public updateModel(attempts: number) {
         switch (this.dynamics) {
             case PottsModelDynamics.GLAUBER:
-                console.log("glauber");
                 this.updateWithGlauberDynamics(attempts);
                 break;
             case PottsModelDynamics.KAWASAKI:
-                console.log("kawasaki");
                 this.updateWithKawasakiDynamics(attempts);
                 break;
         }
@@ -306,7 +303,6 @@ export class PottsModel {
                 const firstCellFlipContribution = this.getEnergyDifferenceFromFlipingCell(firstCell, secondCell.getState());
                 const secondCellFlipContribution = this.getEnergyDifferenceFromFlipingCell(secondCell, firstCell.getState());
                 const energyDifference = firstCellFlipContribution + secondCellFlipContribution;
-                console.log(firstCell.getState() + " " + secondCell.getState() + " " + energyDifference);
                 this.attemptKawasakiFlip(firstCell, secondCell, energyDifference);
             }
             
@@ -332,7 +328,7 @@ export class PottsModel {
         if (firstState == secondState) {
             return 1;
         } else {
-            return 0;
+            return -1;
         }
     }
 

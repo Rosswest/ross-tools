@@ -290,7 +290,6 @@ export class IsingModel {
                 const firstCellFlipContribution = this.getEnergyDifferenceFromFlipingCell(firstCell);
                 const secondCellFlipContribution = this.getEnergyDifferenceFromFlipingCell(secondCell);
                 const energyDifference = firstCellFlipContribution + secondCellFlipContribution;
-                console.log(firstCell.getState() + " " + secondCell.getState() + " " + energyDifference);
                 this.attemptKawasakiFlip(firstCell, secondCell, energyDifference);
             }
             

@@ -1,7 +1,9 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { interval } from 'rxjs';
 import { PottsModel } from './model/potts-model';
 import { PottsModelDynamics } from './model/potts-model-dynamics';
+import { DistinctColorGenerator } from './model/distinct-color-generator';
+import { SetColors } from './model/set-colors';
+import { PottsCell } from './model/potts-cell';
 
 @Component({
   selector: 'app-Potts',
@@ -39,6 +41,8 @@ export class PottsComponent implements OnInit, OnDestroy {
   numberOfStates: number;
   totalEnergy: number;
   totalEnergyString: string;
+  colorMode: string;
+  distinctColorGenerator: DistinctColorGenerator;
 
   /* Model Initialization parameters */
   candidateSize: number = 50;
@@ -54,7 +58,7 @@ export class PottsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.pottsModel = new PottsModel(this.candidateSize, this.candidateSize);
+    this.pottsModel = new PottsModel(this.candidateSize, this.candidateSize, 4);
     this.dynamics = this.dynamicsOptions[0];
     this.modelWidth = this.candidateSize;
     this.modelHeight = this.candidateSize;
@@ -63,6 +67,9 @@ export class PottsComponent implements OnInit, OnDestroy {
     this.interactionStrength = this.pottsModel.getInteractionStrength();
     this.updatesPerTick = this.pottsModel.getUpdatesPerTick();
     this.numberOfStates = this.pottsModel.getNumberOfStates();
+    this.colorMode = 'grayscale';
+    this.distinctColorGenerator = new DistinctColorGenerator();
+    this.initStateToColorMapping();
     this.logConfig();
     this.setFrequency(60);
     this.createOffscreenCanvas();
@@ -142,14 +149,21 @@ export class PottsComponent implements OnInit, OnDestroy {
     this.pottsModel.setBoltzmannConstant(this.boltzmann);
     this.pottsModel.setInteractionStrength(this.interactionStrength);
     this.pottsModel.setUpdatesPerTick(this.updatesPerTick);
+    console.log(this.pottsModel.getBoltzmannConstant());
+    console.log(this.pottsModel.getTemperature());
+    console.log(this.pottsModel.getDynamics());
+    console.log(this.pottsModel.getInteractionStrength());
+    console.log(this.pottsModel.getUpdatesPerTick());
   }
 
   logConfig() {
     console.log("temperature", this.temperature);
     console.log("boltzmann", this.boltzmann);
     console.log("interactionStrength", this.interactionStrength);
+    console.log("numberOfStates", this.numberOfStates);
     console.log("updatesPerTick", this.updatesPerTick);
   }
+
   resetSettings() {
     this.pottsModel.resetSettings();
     this.temperature = this.pottsModel.getTemperature();
@@ -163,13 +177,13 @@ export class PottsComponent implements OnInit, OnDestroy {
     clearInterval(this.timer);
     this.frame = 0;
     this.flipAttempts = 0;
-    this.pottsModel = new PottsModel(this.candidateSize, this.candidateSize);
-    this.pottsModel.setNumberOfStates(this.numberOfStates);
-    this.initStateToColorMapping();
+    console.log("n: " + this.numberOfStates);
+    this.pottsModel = new PottsModel(this.candidateSize, this.candidateSize, this.numberOfStates);
     this.modelWidth = this.candidateSize;
     this.modelHeight = this.candidateSize;
     this.running = false;
     this.applySettings();
+    this.initStateToColorMapping();
     this.repaint();
   }
 
@@ -178,14 +192,46 @@ export class PottsComponent implements OnInit, OnDestroy {
    */
   initStateToColorMapping() {
     this.stateToColorMap = new Map<number, string>();
-    const intervalSize = Math.floor(255 / this.numberOfStates);
-    this.stateToColorMap.set(0, 'rgb(0,0,0)');
-    for (let i = 1; i < this.numberOfStates-1; i++) {
-      const value = Math.floor(i * intervalSize).toFixed(0);
-      const colorString = 'rgb(' + value + ',' + value + ',' + value + ')';
-      this.stateToColorMap.set(i,colorString);
+    if (this.colorMode == 'grayscale') {
+      const intervalSize = Math.floor(255 / this.numberOfStates);
+      this.stateToColorMap.set(0, 'rgb(0,0,0)');
+      for (let i = 1; i < this.numberOfStates-1; i++) {
+        const value = Math.floor(i * intervalSize).toFixed(0);
+        const colorString = 'rgb(' + value + ',' + value + ',' + value + ')';
+        this.stateToColorMap.set(i,colorString);
+      }
+      this.stateToColorMap.set(this.numberOfStates-1, 'rgb(255,255,255)');
+    } else if (this.colorMode == 'distinct') {
+      // let colors = this.getSetColors(this.numberOfStates);
+      let colors = this.distinctColorGenerator.generateColors(this.numberOfStates);
+      for (let i = 0; i < this.numberOfStates; i++) {
+        this.stateToColorMap.set(i,colors[i]);
+      }
     }
-    this.stateToColorMap.set(this.numberOfStates-1, 'rgb(255,255,255)');
+
+  }
+
+  getSetColors(numberOfColors: number) {
+    const colors = [];
+    for (let i = 0; i < numberOfColors; i++) {
+      if (i > SetColors.COLORS.length-1) {
+        colors.push('rgb(0,0,0)');
+      } else {
+        colors.push(SetColors.COLORS[i]);
+      }
+    }
+    return colors;
+  }
+
+  getNDistinguishableColors(N: number) {
+    let colors = [];
+    for (let i = 0; i < N; i++) {
+      const hue = (Math.floor(i * 137.508) % 360).toFixed(0); // use golden angle approximation
+      const color = `hsl(${hue},50%,75%)`;
+      colors.push(color);
+    }
+    return colors;
+
   }
 
   tick() {
@@ -201,4 +247,9 @@ export class PottsComponent implements OnInit, OnDestroy {
     this.totalEnergyString = this.totalEnergy.toFixed(2); //for the sake of convenience in display
   }
 
+  updateColorMode() {
+    console.log(this.colorMode);
+    this.initStateToColorMapping();
+    this.repaint();
+  }
 }
