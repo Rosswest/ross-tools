@@ -13,7 +13,7 @@ const routes: Routes = [
   {path: 'depiction', component: DepictorComponent, loadChildren: () => import('./depictor/depictor.module').then(m => m.DepictorModule)},
   {path: 'ising', component: IsingComponent, loadChildren: () => import('./ising/ising.module').then(m => m.IsingModule)},
   {path: 'potts', component: PottsComponent, loadChildren: () => import('./potts/potts.module').then(m => m.PottsModule)},
-  {path: 'cellular-potts', component: CellularPottsComponent, loadChildren: () => import('./cellular-potts/cellular-potts.module').then(m => m.CellularPottsModule)},
+  // {path: 'cellular-potts', component: CellularPottsComponent, loadChildren: () => import('./cellular-potts/cellular-potts.module').then(m => m.CellularPottsModule)},
   {path: 'sirs', component: SirsComponent, loadChildren: () => import('./sirs/sirs.module').then(m => m.SirsModule)},
   {path: 'transposer', component: TransposerComponent, loadChildren: () => import('./transposer/transposer.module').then(m => m.TransposerModule)},
   {path: '', component: HomeComponent, pathMatch: 'full'}
