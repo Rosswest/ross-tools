@@ -166,10 +166,6 @@ export class IsingModel {
         this.updatesPerTick = updatesPerTick;
     }
 
-    public setDynamics(dynamics: IsingModelDynamics): void {
-        this.dynamics = dynamics;
-    }
-
     public getDynamics(): IsingModelDynamics {
         return this.dynamics;
     }
@@ -177,11 +173,9 @@ export class IsingModel {
     public updateModel(attempts: number) {
         switch (this.dynamics) {
             case IsingModelDynamics.GLAUBER:
-                console.log("glauber");
                 this.updateWithGlauberDynamics(attempts);
                 break;
             case IsingModelDynamics.KAWASAKI:
-                console.log("kawasaki");
                 this.updateWithKawasakiDynamics(attempts);
                 break;
         }
@@ -192,59 +186,33 @@ export class IsingModel {
      */
     private updateWithGlauberDynamics(attempts: number) {
         for (let i = 0; i < attempts; i++) {
-
-            // calculate probability of change given the energy
             const target: IsingCell = this.getRandomCell();
-            const energyDifference = this.getEnergyDifferenceFromFlipingCell(target);
-            this.attemptGlauberFlip(target, energyDifference);
+            const neighbours = target.getNeighbours();
+            const initialState: IsingState = target.getState();
+            const flippedState = this.getFlippedState(initialState);
+            let initialEnergy: number = 0;
+            let flippedEnergy: number = 0;
+            
+            // calculate the energy difference in the initial and flipped states
+            for (const neighbour of neighbours) {
+                const neighbourState = neighbour.getState();
+                const initialEnergyContribution = this.calculateCellPairEnergy(initialState, neighbourState);
+                initialEnergy += initialEnergyContribution;
+                const flippedEnergyContribution = this.calculateCellPairEnergy(flippedState, neighbourState);
+                flippedEnergy += flippedEnergyContribution;
+            }
+    
+            // calculate probability of change given the energy
+            const energyDifference = flippedEnergy - initialEnergy;
+            const probabilityOfFlip = this.getFlipProbability(energyDifference);
+
+            // attempt the flip
+            const roll = Math.random();
+            if (roll < probabilityOfFlip) {
+                target.setState(flippedState);
+            }
             this.ticks++;
         }
-    }
-
-    private attemptGlauberFlip(cell: IsingCell, energyDifference: number) {
-        const probabilityOfFlip = this.getFlipProbability(energyDifference);
-
-        // attempt the flip
-        const roll = Math.random();
-        if (roll < probabilityOfFlip) {
-            const flippedState = this.getFlippedState(cell.getState());
-            cell.setState(flippedState);
-        }
-    }
-
-    private attemptKawasakiFlip(firstCell: IsingCell, secondCell: IsingCell, energyDifference: number) {
-        const probabilityOfFlip = this.getFlipProbability(energyDifference);
-
-        // attempt the flip
-        const roll = Math.random();
-        if (roll < probabilityOfFlip) {
-            //swap the states of the two cells
-            const firstState = firstCell.getState();
-            const secondState = secondCell.getState();
-            firstCell.setState(this.getFlippedState(firstState));
-            secondCell.setState(this.getFlippedState(secondState));
-        }
-    }
-
-    private getEnergyDifferenceFromFlipingCell(cell: IsingCell) {
-        const neighbours = cell.getNeighbours();
-        const initialState = cell.getState();
-        const flippedState = this.getFlippedState(initialState);
-        let initialEnergy: number = 0;
-        let flippedEnergy: number = 0;
-        
-        // calculate the energy difference in the initial and flipped states
-        for (const neighbour of neighbours) {
-            const neighbourState = neighbour.getState();
-            const initialEnergyContribution = this.calculateCellPairEnergy(initialState, neighbourState);
-            initialEnergy += initialEnergyContribution;
-            const flippedEnergyContribution = this.calculateCellPairEnergy(flippedState, neighbourState);
-            flippedEnergy += flippedEnergyContribution;
-        }
-
-        // calculate probability of change given the energy
-        const energyDifference = flippedEnergy - initialEnergy;
-        return energyDifference;
     }
 
     private getFlipProbability(energyDifference: number) {
@@ -273,29 +241,8 @@ export class IsingModel {
      * Attempts to swap the states of two random cells
      */
     private updateWithKawasakiDynamics(attempts: number) {
-        for (let i = 0; i < attempts; i++) {
-            // select two random cells to swap the states of (not the same cell)
-            let sameCell = true;
-            let firstCell: IsingCell = null;
-            let secondCell: IsingCell = null;
-            while (sameCell) {
-                firstCell = this.getRandomCell();
-                secondCell = this.getRandomCell();
-                sameCell = (firstCell == secondCell);
-            }
-            
-            // don't bother calculating if they both have the same state
-            const sameState = (firstCell.getState() == secondCell.getState());
-            if (!sameState) {
-                const firstCellFlipContribution = this.getEnergyDifferenceFromFlipingCell(firstCell);
-                const secondCellFlipContribution = this.getEnergyDifferenceFromFlipingCell(secondCell);
-                const energyDifference = firstCellFlipContribution + secondCellFlipContribution;
-                console.log(firstCell.getState() + " " + secondCell.getState() + " " + energyDifference);
-                this.attemptKawasakiFlip(firstCell, secondCell, energyDifference);
-            }
-            
-            this.ticks++;
-        }
+        //TODO
+
     }
 
     private getRandomCell() {
