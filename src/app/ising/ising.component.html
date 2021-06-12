@@ -6,11 +6,19 @@
         </div>
     </div>
     <div class="options-side">
+        <div class="explanation-container">
+            <p-fieldset legend="Information">
+                <p>The Ising Model is a lattice model which represents the dipole moments of atomic spins in a ferromagnetic material. The interaction hamiltonian is given by:</p>
+                <div class="image-container"><img src="assets/equations/ising-hamiltonian.svg"></div>
+                Where <b>J</b> is the interaction strength between adjacent spins (kept uniform for simplicity).
+                
+            </p-fieldset>
+        </div>
         <div class="stats-container">
             <p-fieldset legend="Simulation">
-                <div><span>Ticks:  {{frame}}</span></div>
-                <div><span>Updates: {{flipAttempts}}</span></div>
-                <div><span>Total Energy: {{totalEnergyString}}</span></div>
+                <div class="row"><span>Ticks:  {{frame}}</span></div>
+                <div class="row"><span>Updates: {{flipAttempts}}</span></div>
+                <div class="row"><span>Total Energy: {{totalEnergyString}}</span></div>
                 <div class="row">
                     <label for="sizeInput">Size</label>
                     <input type="number" min="1" id="size-input" name="sizeInput" [(ngModel)]="candidateSize"><br>

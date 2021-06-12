@@ -8,17 +8,19 @@
     <div class="options-side">
         <div class="explanation-container">
             <p-fieldset legend="Information">
-                <p>The Potts Model is a generalized version of the Ising Model, representing spin interactions in a lattice. The interaction hamiltonian is given by:</p>
+                <p>The Potts Model is a generalized version of the Ising Model, representing spin interactions in a lattice. 
+                    Where the Ising Model represents two states, the Potts Model may represent any number.
+                    The interaction hamiltonian is given by:</p>
                 <div class="image-container"><img src="assets/equations/potts-hamiltonian.svg"></div>
-                Where J is the interaction strength between adjacent spins (kept uniform for simplicity) and &delta; is the Kronecker-delta function (i.e. 1 when two states are the same, 0 when different).
+                Where <b>J</b> is the interaction strength between adjacent spins (kept uniform for simplicity) and <b>&delta;</b> is the Kronecker-delta function (i.e. 1 when two states are the same, 0 when different).
                 
             </p-fieldset>
         </div>
         <div class="stats-container">
             <p-fieldset legend="Simulation">
-                <div><span>Ticks:  {{frame}}</span></div>
-                <div><span>Updates: {{flipAttempts}}</span></div>
-                <div><span>Total Energy: {{totalEnergyString}}</span></div>
+                <div class="row"><span>Ticks:  {{frame}}</span></div>
+                <div class="row"><span>Updates: {{flipAttempts}}</span></div>
+                <div class="row"><span>Total Energy: {{totalEnergyString}}</span></div>
                 <div class="row">
                     <label for="sizeInput">Size</label>
                     <input type="number" min="1" id="size-input" name="sizeInput" [(ngModel)]="candidateSize"><br>
@@ -31,9 +33,11 @@
                     <label for="repaintInput">Repaint on update: </label>
                     <input type="checkbox" name="repaintInput" [(ngModel)]="repaintOnUpdate"><br>
                 </div>
-                <button (click)="toggleRunning()">{{ running ? "Stop" : "Start"}}</button>
-                <button [disabled]="running" (click)="tick()">Step</button>
-                <button [disabled]="running" (click)="reset()">Reset</button>
+                <div class="row">
+                    <button (click)="toggleRunning()">{{ running ? "Stop" : "Start"}}</button>
+                    <button [disabled]="running" (click)="tick()">Step</button>
+                    <button [disabled]="running" (click)="reset()">Reset</button>
+                </div>
             </p-fieldset>
         </div>
         <div class="options-container">
@@ -58,15 +62,17 @@
                         <label for="updatesPerTickInput">Updates Per Tick</label>
                         <input type="number" min="0" oninput="this.value = Math.abs(this.value)" id="updates-per-tick-input" name="updatesPerTickInput" [(ngModel)]="updatesPerTick"><br>
                     </div>
-                    <div id="color-selection-mode-container">
+                    <div class="row" id="color-selection-mode-container">
                         <span>Colors: </span>
                         <p-radioButton name="colorMode1" value="grayscale" [(ngModel)]="colorMode" inputId="grayscale" (click)="updateColorMode()"></p-radioButton>
                         <label for="colorMode1">Grayscale</label>
                         <p-radioButton name="colorMode2" value="distinct" [(ngModel)]="colorMode" inputId="distinct" (click)="updateColorMode()"></p-radioButton>
                         <label for="colorMode2">Distinct</label>
                     </div>
-                    <button (click)="applySettings()">Apply</button>
-                    <button (click)="resetSettings()">Reset</button>
+                    <div class="row">
+                        <button (click)="applySettings()">Apply</button>
+                        <button (click)="resetSettings()">Reset</button>
+                    </div>
             </p-fieldset>
         </div>
     </div>

@@ -1,5 +1,9 @@
 .row {
-    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+::ng-deep .ui-fieldset-legend-text {
+    font-weight: bold;
 }
 
 .canvas-container canvas {
@@ -45,6 +49,7 @@
 .explanation-container .image-container {
     text-align: center;
 }
+
 .options-container,
 .stats-container {
     margin-top: 5px;

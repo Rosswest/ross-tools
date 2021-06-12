@@ -3,6 +3,23 @@
     <p>Loading</p>
 </div>
 <div id="transposer-page">
+
+    <div id="info-container">
+        <p-fieldset legend="Information" [toggleable]="true">
+            <p>This tool is used to extract a subset of data from a delimited data file (e.g. csv) into a number of smaller files.
+                Very large file inputs are supported, but due to limited control over browser memory behaviour it is not recommended to operate on files which exceed your machine's RAM.</p>
+            <ul>
+                <li><p>Choose a file at the bottom of the page</p></li>
+                <li><p>Select the number of fields in the file</p></li>
+                <li><p>Select the file delimiter character</p></li>
+                <li><p>Choose which fields you want to extract from the file</p></li>
+                <li><p>Choose your output formats and file size</p></li>
+                <li><p>Hit 'process' to begin processing your file. Downloads will begin as the files are ready.</p></li>
+                <li><p>You may receive a prompt for the first file, but subsequent files will be download automatically.</p></li>
+            </ul>
+        </p-fieldset>
+    </div>
+
     <form id="transposer-form" [ngClass]="{'disabled': processing}">
         <legend class="ui-widget">Data Transposer</legend>
 

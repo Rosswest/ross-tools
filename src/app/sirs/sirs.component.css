@@ -1,5 +1,5 @@
 .row {
-    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 .canvas-container canvas {
@@ -14,6 +14,18 @@
     float:left;
     display: inine-block;
     padding: 10px;
+}
+
+.explanation-container {
+    display: block;
+}
+
+.explanation-container .image-container {
+    text-align: center;
+}
+
+#sirs-image-container {
+    margin: 10px;
 }
 
 .disabled {
@@ -41,6 +53,7 @@
 .options-container,
 .stats-container {
     margin-top: 5px;
+    float: left;
 }
 
 ::ng-deep p-dropdown .p-dropdown-label.p-inputtext { 

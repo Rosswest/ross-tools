@@ -328,7 +328,7 @@ export class PottsModel {
         if (firstState == secondState) {
             return 1;
         } else {
-            return -1;
+            return 0;
         }
     }
 
