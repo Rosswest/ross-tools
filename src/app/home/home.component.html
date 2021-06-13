@@ -12,6 +12,11 @@
         <i *ngIf="navigatingTo === 'ising'" class="pi pi-fw pi-spinner pi-spin"></i>
         <p class="page-label">Ising Simulator</p>
     </div>
+    <div [ngClass]="{'disabled': navigating && navigatingTo != 'potts' }" id="potts-panel" class="navigation-panel" (click)="navigateTo('potts')">
+        <i *ngIf="navigatingTo != 'potts'" class="pi pi-fw pi-trash"></i>
+        <i *ngIf="navigatingTo === 'potts'" class="pi pi-fw pi-spinner pi-spin"></i>
+        <p class="page-label">Potts Simulator</p>
+    </div>
     <div [ngClass]="{'disabled': navigating && navigatingTo != 'transposer' }" id="transposer-panel" class="navigation-panel" (click)="navigateTo('transposer')">
         <i *ngIf="navigatingTo != 'transposer'" class="pi pi-fw pi-file"></i>
         <i *ngIf="navigatingTo === 'transposer'" class="pi pi-fw pi-spinner pi-spin"></i>
