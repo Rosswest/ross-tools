@@ -29,12 +29,12 @@
                     <label for="numberOfStatesInput">Number of States</label>
                     <input type="number" min="2" oninput="this.value = Math.abs(this.value)" id="number-of-states-input" name="numberOfStatesInput" [(ngModel)]="numberOfStates"><br>
                 </div>
-                    <div class="row">
-                        <label for="updatesPerTickInput">Updates Per Tick</label>
-                        <input type="number" min="0" oninput="this.value = Math.abs(this.value)" id="updates-per-tick-input" name="updatesPerTickInput" [(ngModel)]="updatesPerTick"><br>
-                    </div>
-                    <button (click)="applySettings()">Apply</button>
-                    <button (click)="resetSettings()">Reset</button>
+                <div class="row">
+                    <label for="updatesPerTickInput">Updates Per Tick</label>
+                    <input type="number" min="0" oninput="this.value = Math.abs(this.value)" id="updates-per-tick-input" name="updatesPerTickInput" [(ngModel)]="updatesPerTick"><br>
+                </div>
+                <button (click)="applySettings()">Apply</button>
+                <button (click)="resetSettings()">Reset</button>
             </p-fieldset>
         </div>
     </div>
