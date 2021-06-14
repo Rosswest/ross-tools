@@ -3,8 +3,24 @@
     min-width: 400px;
 }
 
+.row input[type=checkbox] {
+    vertical-align: middle;
+}
+
 .row input {
     display: inline;
+}
+
+.indented {
+    margin-left: 10px;
+}
+
+.explanation-container {
+    display: block;
+}
+
+.explanation-container .image-container {
+    text-align: center;
 }
 
 ::ng-deep .ui-fieldset-legend-text {
