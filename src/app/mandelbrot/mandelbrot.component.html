@@ -1,0 +1,45 @@
+<title>Potts Model</title>
+<div class="clearfix simulation-container">
+    <div class="canvas-side">
+        <div class="canvas-container">
+            <canvas width=600 height=600 #canvas></canvas>
+        </div>
+    </div>
+    <div class="options-side">
+        <div class="explanation-container">
+            <p-fieldset legend="Information">
+                <p>This is an explanation of the Mandelbrot Set.</p>
+            </p-fieldset>
+        </div>
+        <div class="options-container">
+            <p-fieldset disabled="running" legend="Model">
+                <div class="row">
+                    <label for="realMin">Real (X): </label>
+                    <input type="number" id="realMin" name="realMin" [(ngModel)]="realMin">
+                    <input type="number" id="realMax" name="realMax" [(ngModel)]="realMax">
+                </div>
+                <div class="row">
+                    <label for="imaginaryMin">Imaginary (Y): </label>
+                    <input type="number" id="imaginaryMin" name="imaginaryMin" [(ngModel)]="imaginaryMin">
+                    <input type="number" id="imaginaryMax" name="imaginaryMax" [(ngModel)]="imaginaryMax">
+                </div>
+                <div class="row">
+                    <label for="numberOfIterationsToReachThreshold">Iterations to converge: </label>
+                    <input type="number" id="numberOfIterationsToReachThreshold" name="numberOfIterationsToReachThreshold" [(ngModel)]="numberOfIterationsToReachThreshold">
+                </div>
+                <div class="row">
+                    <label for="convergenceThreshold">Convergence Threshold: </label>
+                    <input type="number" id="convergenceThreshold" name="convergenceThreshold" [(ngModel)]="convergenceThreshold">
+                </div>
+                <div class="row">
+                    <button [disabled]="running" (click)="simulate()">Calculate</button>
+                    <button [disabled]="running" (click)="reset()">Reset</button>
+                </div>
+            </p-fieldset>
+        </div>
+    </div>
+</div>
+
+
+
+
