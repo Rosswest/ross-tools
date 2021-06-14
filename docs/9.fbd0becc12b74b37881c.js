@@ -1,0 +1,1 @@
+(window.webpackJsonp=window.webpackJsonp||[]).push([[9],{"0qXk":function(n,o,r){"use strict";r.r(o),r.d(o,"SirsModule",function(){return u});var t=r("ofXK"),e=r("3Pt+"),c=r("arFO"),i=r("fk4S"),s=r("fXoL");let u=(()=>{class n{}return n.\u0275mod=s.Ib({type:n}),n.\u0275inj=s.Hb({factory:function(o){return new(o||n)},imports:[[t.b,e.c,e.j,i.b,c.b]]}),n})()}}]);
