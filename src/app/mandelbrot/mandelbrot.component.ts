@@ -8,7 +8,6 @@ import { ComplexNumber } from './complex-number';
 })
 export class MandelbrotComponent implements OnInit {
 
-
   /* Visualization parameters */
   @ViewChild('canvas', { static: true }) 
   visibleCanvas: ElementRef<HTMLCanvasElement>;
@@ -26,6 +25,11 @@ export class MandelbrotComponent implements OnInit {
   imaginaryMin: number;
   imaginaryMax: number;
 
+
+  isJuliaSet: boolean;
+  juliaReal: number;
+  juliaImaginary: number;
+
   running: boolean = false;
   initialised: boolean = false;
 
@@ -35,7 +39,18 @@ export class MandelbrotComponent implements OnInit {
     this.context = this.visibleCanvas.nativeElement.getContext('2d');
     this.reset();
     this.createOffscreenCanvas();
+    this.drawReadyScreen();
     this.initialised = true;
+  }
+
+  drawReadyScreen() {
+    var x = this.visibleCanvas.nativeElement.width / 2;
+    var y = this.visibleCanvas.nativeElement.height / 2;
+
+    this.context.font = '30pt Calibri';
+    this.context.textAlign = 'center';
+    this.context.fillStyle = 'black';
+    this.context.fillText('Ready to calculate!', x, y);
   }
 
   createOffscreenCanvas() {
@@ -51,14 +66,25 @@ export class MandelbrotComponent implements OnInit {
     return result;
   }
 
-  converges(point: ComplexNumber): boolean {
+  converges(point: ComplexNumber): any {
 
     let mandelbrotValue = point;
+    let iterationValue = null;
+    let c = null;
+    if (this.isJuliaSet) {
+      c = new ComplexNumber(this.juliaReal, this.juliaImaginary);
+      iterationValue = point;
+    } else {
+      // mandelbrot set
+      c = point;
+      iterationValue = new ComplexNumber(0,0);
+    }
+    
     for (let i = 0; i < this.numberOfIterationsToReachThreshold; i++) {
-      mandelbrotValue = this.mandelbrotIteration(mandelbrotValue,point);
+      mandelbrotValue = this.mandelbrotIteration(mandelbrotValue,c);
       const magnitude = ComplexNumber.magnitude(mandelbrotValue);
       if (magnitude > this.convergenceThreshold) {
-        return false;
+        return i;
       }
     }
 
@@ -82,7 +108,13 @@ export class MandelbrotComponent implements OnInit {
         const imaginary = this.imaginaryMin + (imaginaryRange * yProp);
         const point: ComplexNumber = new ComplexNumber(real, imaginary);
         const converges = this.converges(point);
-        let color = (converges ? 'black' : 'white');
+        let color = null;
+        if (converges == true) {
+          color = 'black';
+        } else {
+          const n = 360 * (converges / this.numberOfIterationsToReachThreshold);
+          color = 'rgb(' + n + ','+ n + ','+ n + ')';
+        }
         this.osContext.fillStyle = color;
         const actualY = height-y; //y is inverted
         this.osContext.fillRect(x,actualY,1,1);
@@ -109,6 +141,9 @@ export class MandelbrotComponent implements OnInit {
     this.imaginaryMax = 2;
     this.numberOfIterationsToReachThreshold = 100;
     this.convergenceThreshold = 4.0;
+    this.isJuliaSet = false;
+    this.juliaReal = 0.45;
+    this.juliaImaginary = 0.57;
     if (this.initialised) {
       this.repaint();
     }
