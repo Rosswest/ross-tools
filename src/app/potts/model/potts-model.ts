@@ -4,6 +4,7 @@ import { PottsModelDynamics } from "./potts-model-dynamics";
 export class PottsModel {
 
     public static readonly BOLTZMANN_CONSTANT: number = 1.38064852e-23;
+    public static readonly DEFAULT_BOLTZMANN: number = 0.05;
     public static readonly DEFAULT_TEMPERATURE: number = 0.5;
     public static readonly DEFAULT_INTERACTION_STRENGTH: number = 0.05;
     public static readonly DEFAULT_UPDATES_PER_TICK: number = 1000;
@@ -22,6 +23,7 @@ export class PottsModel {
     height: number;
     sites: PottsCell[][];
     ticks: number;
+    totalEnergy: number;
 
     constructor(width: number, height: number, numberOfStates: number) {
         this.width =  Math.floor(width);
@@ -31,11 +33,12 @@ export class PottsModel {
         this.ticks = 0;
         this.sites = this.createInitialSites();
         this.populateNeighbourAwareness();
+        this.calculateTotalEnergy();
     }
 
     resetSettings() {
         this.temperature = PottsModel.DEFAULT_TEMPERATURE;
-        this.boltzmann = PottsModel.BOLTZMANN_CONSTANT;
+        this.boltzmann = PottsModel.DEFAULT_BOLTZMANN;
         this.interactionStrength = PottsModel.DEFAULT_INTERACTION_STRENGTH;
         this.updatesPerTick = PottsModel.DEFAULT_UPDATES_PER_TICK;
         this.numberOfStates = PottsModel.DEFAULT_NUMBER_OF_STATES;
@@ -55,6 +58,8 @@ export class PottsModel {
                 totalEnergy += energy;
             }
         }
+
+        this.totalEnergy = totalEnergy;
         return totalEnergy;
     }
 
@@ -178,7 +183,8 @@ export class PottsModel {
         return this.dynamics;
     }
 
-    public updateModel(attempts: number) {
+    public updateModel() {
+        const attempts = this.updatesPerTick;
         switch (this.dynamics) {
             case PottsModelDynamics.GLAUBER:
                 this.updateWithGlauberDynamics(attempts);
@@ -229,6 +235,7 @@ export class PottsModel {
         const roll = Math.random();
         if (roll < probabilityOfFlip) {;
             cell.setState(newState);
+            this.totalEnergy += energyDifference;
         }
         
 
@@ -245,6 +252,7 @@ export class PottsModel {
             const secondState = secondCell.getState();
             firstCell.setState(secondState);
             secondCell.setState(firstState);
+            this.totalEnergy += energyDifference;
         }
     }
 

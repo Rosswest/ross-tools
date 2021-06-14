@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FieldsetModule } from 'primeng/fieldset';
 import { DropdownModule } from 'primeng/dropdown';
 import {RadioButtonModule} from 'primeng/radiobutton';
+import {SliderModule} from 'primeng/slider';
 
 
 
@@ -16,7 +17,8 @@ import {RadioButtonModule} from 'primeng/radiobutton';
     ReactiveFormsModule,
     FieldsetModule,
     DropdownModule,
-    RadioButtonModule
+    RadioButtonModule,
+    SliderModule
   ]
 })
 export class PottsModule { }
