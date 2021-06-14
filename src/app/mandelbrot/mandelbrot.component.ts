@@ -19,16 +19,16 @@ export class MandelbrotComponent implements OnInit {
   private osContext: OffscreenCanvasRenderingContext2D;
 
   /* Simulation Parameters */
-  numberOfIterationsToReachThreshold: number = 1000;
-  convergenceThreshold: number = 4.0;
-  realMin: number = -1;
-  realMax: number = 1;
-  imaginaryMin: number = -1;
-  imaginaryMax: number = 1;
+  numberOfIterationsToReachThreshold: number;
+  convergenceThreshold: number;
+  realMin: number;
+  realMax: number;
+  imaginaryMin: number;
+  imaginaryMax: number;
 
   running: boolean = false;
   initialised: boolean = false;
-  
+
   constructor() { }
 
   ngOnInit(): void {
@@ -107,6 +107,8 @@ export class MandelbrotComponent implements OnInit {
     this.realMax = 2;
     this.imaginaryMin = -2;
     this.imaginaryMax = 2;
+    this.numberOfIterationsToReachThreshold = 100;
+    this.convergenceThreshold = 4.0;
     if (this.initialised) {
       this.repaint();
     }

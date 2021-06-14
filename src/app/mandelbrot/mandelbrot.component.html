@@ -32,7 +32,7 @@
                     <input type="number" id="convergenceThreshold" name="convergenceThreshold" [(ngModel)]="convergenceThreshold">
                 </div>
                 <div class="row">
-                    <button [disabled]="running" (click)="simulate()">Calculate</button>
+                    <button [disabled]="running" (click)="repaint()">Calculate</button>
                     <button [disabled]="running" (click)="reset()">Reset</button>
                 </div>
             </p-fieldset>
