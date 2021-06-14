@@ -2,7 +2,7 @@
 <div class="clearfix simulation-container">
     <div class="canvas-side">
         <div class="canvas-container">
-            <canvas #canvas></canvas>
+            <canvas width=600 height=600 #canvas></canvas>
         </div>
     </div>
     <div class="options-side">
@@ -26,7 +26,7 @@
                     <input type="number" min="1" id="size-input" name="sizeInput" [(ngModel)]="candidateSize"><br>
                 </div>
                 <div class="row">
-                    <label for="updatesPerTickInput">Number of States</label>
+                    <label for="numerOfStatesInput">Number of States</label>
                     <input type="number" min="2" max="36" oninput="this.value = Math.abs(this.value)" id="number-of-states-input" name="numberOfStatesInput" [(ngModel)]="numberOfStates"><br>
                 </div>
                 <div class="row">
@@ -44,23 +44,26 @@
             <p-fieldset disabled="running" legend="Model">
                     <div class="row">
                         <label for="temperatureInput">Temperature</label>
-                        <input type="number" step="0.01" min="0" id="temperature-input" name="temperatureInput" [(ngModel)]="temperature"><br>
-                    </div>
-                    <div class="row">
-                        <label for="boltzmannInput">Boltzmann</label>
-                        <input type="number" step="0.01" min="0" id="boltzmann-input" name="boltzmannInput" [(ngModel)]="boltzmann"><br>
+                        <input type="number" step="0.01" min="0" id="temperature-input" name="temperatureInput" [(ngModel)]="temperature" (ngModelChange)="applySettingsIfTracking()"><br>
+                        <p-slider [min]=1 [max]=1000 [(ngModel)]="temperature" (ngModelChange)="applySettingsIfTracking()"></p-slider>
                     </div>
                     <div class="row">
                         <label for="interactionStrengthInput">Interaction Strength</label>
-                        <input type="number" step="0.01" id="interaction-strength-input" name="interactionStrengthInput" [(ngModel)]="interactionStrength"><br>     
+                        <input type="number" id="interaction-strength-input" name="interactionStrengthInput" [(ngModel)]="interactionStrength" (ngModelChange)="applySettingsIfTracking()"><br>     
+                        <p-slider [min]=1 [max]=100 [(ngModel)]="interactionStrength" (ngModelChange)="applySettingsIfTracking()"></p-slider>
+                    </div>
+                    <div class="row">
+                        <label for="updatesPerTickInput">Updates Per Tick</label>
+                        <input type="number" min="0" oninput="this.value = Math.abs(this.value)" id="updates-per-tick-input" name="updatesPerTickInput" [(ngModel)]="updatesPerTick" (ngModelChange)="applySettingsIfTracking()"><br>
+                        <p-slider [min]=100 [max]=10000 [(ngModel)]="updatesPerTick" (ngModelChange)="applySettingsIfTracking()"></p-slider>
+                    </div>
+                    <div class="row">
+                        <label for="boltzmannInput">Boltzmann</label>
+                        <input type="number" step="0.01" min="0" id="boltzmann-input" name="boltzmannInput" [(ngModel)]="boltzmann" (ngModelChange)="applySettingsIfTracking()"><br>
                     </div>
                     <div class="row">
                         <label for="dynamicsInput">Dynamics</label>
                         <p-dropdown [options]="dynamicsOptions" [(ngModel)]="dynamics" optionLabel="label"></p-dropdown>
-                    </div>
-                    <div class="row">
-                        <label for="updatesPerTickInput">Updates Per Tick</label>
-                        <input type="number" min="0" oninput="this.value = Math.abs(this.value)" id="updates-per-tick-input" name="updatesPerTickInput" [(ngModel)]="updatesPerTick"><br>
                     </div>
                     <div class="row" id="color-selection-mode-container">
                         <span>Colors: </span>
@@ -68,6 +71,10 @@
                         <label for="colorMode1"> Grayscale</label>
                         <p-radioButton name="colorMode2" value="distinct" [(ngModel)]="colorMode" inputId="distinct" (click)="updateColorMode()"></p-radioButton>
                         <label for="colorMode2"> Distinct</label>
+                    </div>
+                    <div class="row">
+                        <label for="automaticApplyInput">Automatically apply: </label>
+                        <input type="checkbox" name="automaticApplyInput" [(ngModel)]="automaticallyApplySettings"><br>
                     </div>
                     <div class="row">
                         <button (click)="applySettings()">Apply</button>

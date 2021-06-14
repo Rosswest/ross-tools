@@ -17,6 +17,11 @@
         <i *ngIf="navigatingTo === 'potts'" class="pi pi-fw pi-spinner pi-spin"></i>
         <p class="page-label">Potts Simulator</p>
     </div>
+    <div [ngClass]="{'disabled': navigating && navigatingTo != 'mandelbrot' }" id="mandelbrot-panel" class="navigation-panel" (click)="navigateTo('mandelbrot')">
+        <i *ngIf="navigatingTo != 'mandelbrot'" class="pi pi-fw pi-percentage"></i>
+        <i *ngIf="navigatingTo === 'mandelbrot'" class="pi pi-fw pi-spinner pi-spin"></i>
+        <p class="page-label">Mandelbrot</p>
+    </div>
     <div [ngClass]="{'disabled': navigating && navigatingTo != 'transposer' }" id="transposer-panel" class="navigation-panel" (click)="navigateTo('transposer')">
         <i *ngIf="navigatingTo != 'transposer'" class="pi pi-fw pi-file"></i>
         <i *ngIf="navigatingTo === 'transposer'" class="pi pi-fw pi-spinner pi-spin"></i>

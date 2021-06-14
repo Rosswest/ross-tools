@@ -3,7 +3,6 @@ import { PottsModel } from './model/potts-model';
 import { PottsModelDynamics } from './model/potts-model-dynamics';
 import { DistinctColorGenerator } from './model/distinct-color-generator';
 import { SetColors } from './model/set-colors';
-import { PottsCell } from './model/potts-cell';
 
 @Component({
   selector: 'app-Potts',
@@ -43,6 +42,7 @@ export class PottsComponent implements OnInit, OnDestroy {
   totalEnergyString: string;
   colorMode: string;
   distinctColorGenerator: DistinctColorGenerator;
+  automaticallyApplySettings: boolean = true;
 
   /* Model Initialization parameters */
   candidateSize: number = 50;
@@ -67,6 +67,7 @@ export class PottsComponent implements OnInit, OnDestroy {
     this.interactionStrength = this.pottsModel.getInteractionStrength();
     this.updatesPerTick = this.pottsModel.getUpdatesPerTick();
     this.numberOfStates = this.pottsModel.getNumberOfStates();
+    this.updateTotalEnergy();
     this.colorMode = 'grayscale';
     this.distinctColorGenerator = new DistinctColorGenerator();
     this.initStateToColorMapping();
@@ -235,21 +236,27 @@ export class PottsComponent implements OnInit, OnDestroy {
   }
 
   tick() {
-    this.pottsModel.updateModel(this.updatesPerTick);
-    this.flipAttempts += this.updatesPerTick;
+    this.pottsModel.updateModel();
+    const updatesThisTick = this.pottsModel.getUpdatesPerTick();
+    this.flipAttempts += updatesThisTick;
     this.frame++;
     this.updateTotalEnergy();
     this.repaint();
   }
 
   updateTotalEnergy() {
-    this.totalEnergy = this.pottsModel.calculateTotalEnergy();
-    this.totalEnergyString = this.totalEnergy.toFixed(2); //for the sake of convenience in display
+    this.totalEnergyString = this.pottsModel.totalEnergy.toFixed(2); //for the sake of convenience in display
   }
 
   updateColorMode() {
     console.log(this.colorMode);
     this.initStateToColorMapping();
     this.repaint();
+  }
+
+  applySettingsIfTracking() {
+    if (this.automaticallyApplySettings) {
+      this.applySettings();
+    }
   }
 }
