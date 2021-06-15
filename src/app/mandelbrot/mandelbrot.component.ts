@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ComplexNumber } from './complex-number';
+import { JuliaSetColorGenerator } from './model/julia-set-color-generator';
 
 @Component({
   selector: 'app-mandelbrot',
@@ -7,6 +8,7 @@ import { ComplexNumber } from './complex-number';
   styleUrls: ['./mandelbrot.component.css']
 })
 export class MandelbrotComponent implements OnInit {
+
 
   /* Visualization parameters */
   @ViewChild('canvas', { static: true }) 
@@ -25,7 +27,6 @@ export class MandelbrotComponent implements OnInit {
   imaginaryMin: number;
   imaginaryMax: number;
 
-
   isJuliaSet: boolean;
   juliaReal: number;
   juliaImaginary: number;
@@ -33,14 +34,24 @@ export class MandelbrotComponent implements OnInit {
   running: boolean = false;
   initialised: boolean = false;
 
+  colorConvergentPoints: boolean;
+  colorDivergentPoints: boolean;
+  colorMode: string;
+  colorGenerator: JuliaSetColorGenerator;
+
   constructor() { }
 
   ngOnInit(): void {
     this.context = this.visibleCanvas.nativeElement.getContext('2d');
     this.reset();
+    this.colorConvergentPoints = true;
+    this.colorDivergentPoints = true;
+    this.colorMode = 'distinct';
+    this.colorGenerator = new JuliaSetColorGenerator();
     this.createOffscreenCanvas();
     this.drawReadyScreen();
     this.initialised = true;
+
   }
 
   drawReadyScreen() {
@@ -66,7 +77,13 @@ export class MandelbrotComponent implements OnInit {
     return result;
   }
 
-  converges(point: ComplexNumber): any {
+  /**
+   * 
+   * @param point The point to converge via iteration
+   * @returns The number of iterations run prior to convergence. -1 indicates no convergence
+   */
+  attemptToConverge(point: ComplexNumber): number {
+    const values = [];
 
     let mandelbrotValue = point;
     let iterationValue = null;
@@ -86,11 +103,55 @@ export class MandelbrotComponent implements OnInit {
       if (magnitude > this.convergenceThreshold) {
         return i;
       }
+      values.push(magnitude);
     }
 
-    return true;
+    let sum = 0;
+    for (const value of values) {
+      sum += value;
+    }
+    const average = sum / values.length;
+    return -1.0 * average;
     // does this need to be checked every iteration?
 
+  }
+
+  generateConvergentColor(averageValue: number) {
+    if (this.colorConvergentPoints) {
+      const prop = averageValue / this.convergenceThreshold;
+      const i = this.numberOfIterationsToReachThreshold * prop;
+      // console.log(averageValue, i);
+      const n = 255 * (averageValue / this.convergenceThreshold);
+      let color = null;
+      if (this.colorMode == 'distinct') {
+        color = this.colorGenerator.generateColor(i, 1.0);
+      } else if (this.colorMode == 'grayscale') {
+        color = 'rgb(' + n + ','+ n + ','+ n + ')';
+      }
+      return color;
+    } else {
+      return 'black';
+    }
+    
+  }
+
+  generateDivergentColor(iterationsToDiverge: number) {
+    if (this.colorDivergentPoints) {
+
+      const prop = iterationsToDiverge / this.numberOfIterationsToReachThreshold;
+      let color = null;
+      if (this.colorMode == 'distinct') {
+        const opacity = 1.0 - prop;
+        color = this.colorGenerator.generateColor(iterationsToDiverge, opacity);
+      } else if (this.colorMode == 'grayscale') {
+        const n = (255 * prop)
+        color = 'rgb(' + n + ','+ n + ','+ n + ')';
+      }
+
+      return color;
+    } else {
+      return '#f7f7f7';
+    }
   }
 
   repaint() {
@@ -107,13 +168,14 @@ export class MandelbrotComponent implements OnInit {
         const real = this.realMin + (realRange * xProp);
         const imaginary = this.imaginaryMin + (imaginaryRange * yProp);
         const point: ComplexNumber = new ComplexNumber(real, imaginary);
-        const converges = this.converges(point);
+        const convergence = this.attemptToConverge(point);
         let color = null;
-        if (converges == true) {
-          color = 'black';
+        
+        if (convergence < 0) {
+          const averageValue = Math.abs(convergence);
+          color = this.generateConvergentColor(averageValue);
         } else {
-          const n = 360 * (converges / this.numberOfIterationsToReachThreshold);
-          color = 'rgb(' + n + ','+ n + ','+ n + ')';
+          color = this.generateDivergentColor(convergence);
         }
         this.osContext.fillStyle = color;
         const actualY = height-y; //y is inverted
@@ -148,4 +210,5 @@ export class MandelbrotComponent implements OnInit {
       this.repaint();
     }
   }
+
 }
