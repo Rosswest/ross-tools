@@ -158,6 +158,8 @@ export class MandelbrotComponent implements OnInit {
     this.running = true;
     const width = this.visibleCanvas.nativeElement.width;
     const height =  this.visibleCanvas.nativeElement.height;
+    this.osContext.fillStyle = 'white';
+    this.osContext.fillRect(0,0,width,height);
     const realRange = (this.realMax - this.realMin);
     const imaginaryRange = (this.imaginaryMax - this.imaginaryMin);
 
