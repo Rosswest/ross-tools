@@ -49,7 +49,21 @@
                     <label for="juliaReal">Imaginary: </label>
                     <input [disabled]="!isJuliaSet" type="number" id="juliaImaginary" name="juliaImaginary" [(ngModel)]="juliaImaginary">
                 </div>
-                    
+                <div class="row" id="color-selection-mode-container">
+                    <span>Colors: </span>
+                    <p-radioButton name="colorMode1" value="grayscale" [(ngModel)]="colorMode" inputId="grayscale" (click)="repaint()"></p-radioButton>
+                    <label for="colorMode1"> Grayscale</label>
+                    <p-radioButton name="colorMode2" value="distinct" [(ngModel)]="colorMode" inputId="distinct" (click)="repaint()"></p-radioButton>
+                    <label for="colorMode2"> Distinct</label>
+                </div>
+                <div class="row">
+                    <label for="colorConvergentPoints">Color convergent points: </label>
+                    <input type="checkbox" name="colorConvergentPoints" [(ngModel)]="colorConvergentPoints">
+                </div>
+                <div class="row">
+                    <label for="colorDivergentPoints">Color divergent points: </label>
+                    <input type="checkbox" name="colorDivergentPoints" [(ngModel)]="colorDivergentPoints">
+                </div>
                 <div class="row">
                     <button [disabled]="running" (click)="repaint()">Calculate</button>
                     <button [disabled]="running" (click)="reset()">Reset</button>
