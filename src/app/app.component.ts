@@ -20,6 +20,7 @@ export class AppComponent implements OnInit {
       {label: 'Ising', routerLink: ['ising'], icon: 'pi pi-fw pi-th-large'},
       {label: 'Potts', routerLink: ['potts'] ,icon: 'pi pi-fw pi-trash'},
       {label: 'Mandelbrot', routerLink: ['mandelbrot'] ,icon: 'pi pi-fw pi-percentage'},
+      {label: 'Geometry', routerLink: ['geometry'] ,icon: 'pi pi-fw pi-percentage'},
       // {label: 'Cellular Potts', routerLink: ['cellular-potts'] ,icon: 'pi pi-fw pi-chart-bar'},
       {label: 'Transposer', routerLink: ['transposer'] ,icon: 'pi pi-fw pi-file'}
     ];  

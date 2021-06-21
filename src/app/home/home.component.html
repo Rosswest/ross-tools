@@ -22,6 +22,11 @@
         <i *ngIf="navigatingTo === 'mandelbrot'" class="pi pi-fw pi-spinner pi-spin"></i>
         <p class="page-label">Mandelbrot</p>
     </div>
+    <div [ngClass]="{'disabled': navigating && navigatingTo != 'geometry' }" id="geometry-panel" class="navigation-panel" (click)="navigateTo('geometry')">
+        <i *ngIf="navigatingTo != 'geometry'" class="pi pi-fw pi-map"></i>
+        <i *ngIf="navigatingTo === 'geometry'" class="pi pi-fw pi-spinner pi-spin"></i>
+        <p class="page-label">Geometry</p>
+    </div>
     <div [ngClass]="{'disabled': navigating && navigatingTo != 'transposer' }" id="transposer-panel" class="navigation-panel" (click)="navigateTo('transposer')">
         <i *ngIf="navigatingTo != 'transposer'" class="pi pi-fw pi-file"></i>
         <i *ngIf="navigatingTo === 'transposer'" class="pi pi-fw pi-spinner pi-spin"></i>
