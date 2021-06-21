@@ -4,7 +4,6 @@ import { BruteForceHull } from './model/brutce-force-hull';
 import { DivideAndConquerHull } from './model/divide-and-conquer-hull';
 import { Explanation } from './model/explanation';
 import { QuickHull } from './model/quick-hull';
-import { Vector2D } from './model/vector2D';
 
 @Component({
   selector: 'app-geometry',
@@ -35,9 +34,9 @@ export class GeometryComponent implements OnInit {
   algorithmOptions: any[];
   algorithmOptionsList: any = {
     'convex-hull': [
-      {label: 'Brute Force', value: 'brute-force', info: Explanation.CONVEX_HULL_BRUTE_FORCE},
-      {label: 'Quick Hull', value: 'quick-hull', info: Explanation.CONVEX_HULL_QUICK_HULL},
-      {label: 'Divide & Conquer', value: 'divide-and-conquer', info: Explanation.CONVEX_HULL_DIVIDE_AND_CONQUER}
+      {label: 'Brute Force', value: 'brute-force', info: Explanation.CONVEX_HULL_BRUTE_FORCE, imagePath: 'assets/geometry/convex-hull-brute-force.svg'},
+      {label: 'Quick Hull', value: 'quick-hull', info: Explanation.CONVEX_HULL_QUICK_HULL, imagePath: 'assets/geometry/convex-hull-quick-hull.svg'},
+      {label: 'Divide & Conquer', value: 'divide-and-conquer', info: Explanation.CONVEX_HULL_DIVIDE_AND_CONQUER, imagePath: 'assets/geometry/convex-hull-divide-conquer.svg'}
     ],
     'test': [
       {label: 'One', value: 'one'},
@@ -56,6 +55,10 @@ export class GeometryComponent implements OnInit {
   running: boolean = false;
   initialised: boolean = false;
 
+  logs: string[];
+  logsString: string;
+  @ViewChild('logs') logArea: ElementRef<HTMLTextAreaElement>;
+
   constructor() { }
 
   ngOnInit(): void {
@@ -66,19 +69,13 @@ export class GeometryComponent implements OnInit {
     this.selectedAlgorithm = this.algorithmOptions[0];
     this.points = [];
     this.convexHullPoints = [];
+    this.logs = [];
+    this.logsString = '';
     this.reset();
     this.createOffscreenCanvas();
     this.drawReadyScreen();
     this.running = false;
     this.initialised = true;
-    const first = new Vector2D(0,0);
-    const second = new Vector2D(2,0);
-    const query1 = new Vector2D(1,1);
-    const query2 = new Vector2D(1,-1);
-    const query3 = new Vector2D(1,0);
-    const orientation1 = Vector2D.orientation(first,second,query1);
-    const orientation2 = Vector2D.orientation(first,second,query2);
-    const orientation3 = Vector2D.orientation(first,second,query3);
   }
 
   drawReadyScreen() {
@@ -198,19 +195,36 @@ export class GeometryComponent implements OnInit {
 
   calculate() {
     this.running = true;
+    
     if (this.points.length < 1) {
-      alert("Please add some points to the canvas before calculating");
+      this.addLog("Please add some points to the canvas before calculating");
     } else {
+      const start = new Date().getTime();
       const selectedCalculation = this.selectedCalculation.value;
       if (selectedCalculation == 'convex-hull') {
         this.calculateConvexHull();
       } else if (selectedCalculation == 'test') {
-        alert("Not an actual calculation");
+        this.addLog("Not an actual calculation");
       }
+      const end = new Date().getTime();
+      const calculationName = this.selectedCalculation.label;
+      const algorithmName = this.selectedAlgorithm.label;
+      const pointCount = this.points.length;
+      const duration = end - start;
+      const message = `Calculated ${calculationName} with ${algorithmName} algorithm for ${pointCount} points in ${duration}ms`;
+      this.addLog(message);
     }
     this.running = false;
   }
+
+  addLog(log:string) {
+    this.logs.push(log);
+    this.logsString = this.logsString + '\n' + log;
+    this.logArea.nativeElement.scrollTop = this.logArea.nativeElement.scrollHeight;
+  }
+
   calculateConvexHull() {
+    const start = new Date().getTime();
     const selectedAlgorithm = this.selectedAlgorithm.value;
     if (selectedAlgorithm == 'quick-hull') {
       this.model = new QuickHull(this.points);
@@ -219,6 +233,8 @@ export class GeometryComponent implements OnInit {
     } else if (selectedAlgorithm == 'brute-force') {
       this.model = new BruteForceHull(this.points);
     }
+    const end = new Date().getTime();
+    const dur = end - start;
     this.convexHullPoints = this.model.hullPoints;
     console.log("points",this.convexHullPoints);
     console.log("segments",this.model.segments);

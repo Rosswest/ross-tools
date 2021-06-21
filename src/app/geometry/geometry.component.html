@@ -9,6 +9,7 @@
         <div class="explanation-container">
             <p-fieldset legend="Information">
                 <p>{{selectedCalculation.info}}</p>
+                <div class="image-container"><img [src]="selectedAlgorithm.imagePath"></div>
                 <p>{{selectedAlgorithm.info}}</p>
             </p-fieldset>
         </div>
@@ -33,7 +34,11 @@
 
             </p-fieldset>
         </div>
-
+        <div class="log-container">
+            <p-fieldset disabled="running" legend="Logs">
+                <textarea #logs disabled [(ngModel)]="logsString"></textarea>
+            </p-fieldset>
+        </div>
     </div>
 </div>
 

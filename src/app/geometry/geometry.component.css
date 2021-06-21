@@ -48,9 +48,12 @@
     text-align: center;
 }
 
-.options-container,
-.stats-container {
-    margin-top: 5px;
+.explanation-container .image-container img {
+    height: 200px;
+}
+
+.calculations-container,
+.log-container {
     float: left;
 }
 
@@ -63,4 +66,15 @@
 
 #color-selection-mode-container p-radioButton{
     margin-left: 10px;
+}
+
+.calculations-container button {
+    margin-right: 5px;
+    border: 1px solid #c8c8c8;
+}
+
+.log-container textarea {
+    resize: none;
+    width: 400px;
+    height: 150px;
 }
