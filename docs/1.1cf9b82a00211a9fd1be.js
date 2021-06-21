@@ -1,1 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[1],{ejew:function(n,o,e){"use strict";e.r(o),e.d(o,"DepictorModule",function(){return c});var t=e("ofXK"),r=e("fXoL");let c=(()=>{class n{}return n.\u0275mod=r.Ib({type:n}),n.\u0275inj=r.Hb({factory:function(o){return new(o||n)},imports:[[t.b]]}),n})()}}]);

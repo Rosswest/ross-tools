@@ -1,1 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[10],{"0qXk":function(n,o,r){"use strict";r.r(o),r.d(o,"SirsModule",function(){return w});var t=r("ofXK"),c=r("3Pt+"),e=r("arFO"),i=r("fk4S"),s=r("jIHw"),u=r("fXoL");let w=(()=>{class n{}return n.\u0275mod=u.Ib({type:n}),n.\u0275inj=u.Hb({factory:function(o){return new(o||n)},imports:[[t.b,c.c,c.j,i.b,e.b,s.c]]}),n})()}}]);
