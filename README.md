@@ -10,6 +10,9 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 The project contains an assorted set of tools developed by Ross West (rosswest@hotmail.co.uk), including
 * Ising Model - simulates ferromagnetism
 * SIRS Model - simulates the spread of disease
+* Potts Model - more generic magnetism simulation
+* Mandelbrot - simulation of mandelbrot and julia sets
+* Geometry - various computational geometry calculations
 * Data Transposer - for reordering data sets (e.g. XYZ -> ZXY)
 
 ## Getting Started
