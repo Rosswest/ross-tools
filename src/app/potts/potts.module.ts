@@ -6,6 +6,7 @@ import { FieldsetModule } from 'primeng/fieldset';
 import { DropdownModule } from 'primeng/dropdown';
 import {RadioButtonModule} from 'primeng/radiobutton';
 import {SliderModule} from 'primeng/slider';
+import { ButtonModule } from 'primeng/button';
 
 
 
@@ -18,7 +19,8 @@ import {SliderModule} from 'primeng/slider';
     FieldsetModule,
     DropdownModule,
     RadioButtonModule,
-    SliderModule
+    SliderModule,
+    ButtonModule
   ]
 })
 export class PottsModule { }

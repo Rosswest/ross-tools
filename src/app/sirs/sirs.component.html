@@ -31,9 +31,9 @@
                     <label for="repaintInput">Repaint on update: </label>
                     <input type="checkbox" name="repaintInput" [(ngModel)]="repaintOnUpdate"><br>
                 </div>
-                <button (click)="toggleRunning()">{{ running ? "Stop" : "Start"}}</button>
-                <button [disabled]="running" (click)="tick()">Step</button>
-                <button [disabled]="running" (click)="reset()">Reset</button>
+                <button pButton type="button" label="{{ running ? 'Stop' : 'Start'}}" (click)="toggleRunning()"></button>
+                <button pButton type="button" label="Step" [disabled]="running" (click)="tick()"></button>
+                <button pButton type="button" label="Reset" [disabled]="running" (click)="reset()"></button>
             </p-fieldset>
         </div>
         <div class="options-container">
@@ -58,8 +58,8 @@
                         <label for="immunityToggle">Repaint on update: </label>
                         <input type="checkbox" name="immunityToggle" [(ngModel)]="enableImmunity"><br>
                     </div>
-                    <button (click)="applySettings()">Apply</button>
-                    <button (click)="resetSettings()">Reset</button>
+                    <button pButton type="button" label="Apply" (click)="applySettings()"></button>
+                    <button pButton type="button" label="Reset" (click)="resetSettings()"></button>
             </p-fieldset>
         </div>
     </div>

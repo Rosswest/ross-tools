@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FieldsetModule } from 'primeng/fieldset';
 import { DropdownModule } from 'primeng/dropdown';
 import {RadioButtonModule} from 'primeng/radiobutton';
+import { ButtonModule } from 'primeng/button';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import {RadioButtonModule} from 'primeng/radiobutton';
     FieldsetModule,
     DropdownModule,
     RadioButtonModule,
+    ButtonModule
   ]
 })
 export class MandelbrotModule {}

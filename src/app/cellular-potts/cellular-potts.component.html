@@ -18,9 +18,9 @@
                     <label for="repaintInput">Repaint on update: </label>
                     <input type="checkbox" name="repaintInput" [(ngModel)]="repaintOnUpdate"><br>
                 </div>
-                <button (click)="toggleRunning()">{{ running ? "Stop" : "Start"}}</button>
-                <button [disabled]="running" (click)="tick()">Step</button>
-                <button [disabled]="running" (click)="reset()">Reset</button>
+                <button pButton type="button" label="{{running ? 'Stop' : 'Start'}}" (click)="toggleRunning()"></button>
+                <button pButton type="button" label="Step" [disabled]="running" (click)="tick()"></button>
+                <button pButton type="button" label="Reset" [disabled]="running" (click)="reset()"></button>
             </p-fieldset>
         </div>
         <div class="options-container">

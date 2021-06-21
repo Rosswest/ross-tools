@@ -66,8 +66,8 @@
                     <input type="checkbox" name="colorDivergentPoints" [(ngModel)]="colorDivergentPoints">
                 </div>
                 <div class="row">
-                    <button [disabled]="running" (click)="repaint()">Calculate</button>
-                    <button [disabled]="running" (click)="reset()">Reset</button>
+                    <button pButton type="button" label="Calculate"  [disabled]="running" (click)="repaint()"></button>
+                    <button pButton type="button" label="Reset"  [disabled]="running" (click)="reset()"></button>
                 </div>
             </p-fieldset>
         </div>

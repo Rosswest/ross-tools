@@ -4,6 +4,7 @@ import { IsingComponent } from './ising.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {FieldsetModule} from 'primeng/fieldset';
 import {DropdownModule} from 'primeng/dropdown';
+import { ButtonModule } from 'primeng/button';
 
 
 @NgModule({
@@ -13,7 +14,8 @@ import {DropdownModule} from 'primeng/dropdown';
     FormsModule,
     ReactiveFormsModule,
     FieldsetModule,
-    DropdownModule
+    DropdownModule,
+    ButtonModule
   ]
 })
 export class IsingModule { }
