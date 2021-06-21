@@ -2,6 +2,11 @@
     margin-bottom: 5px;
 }
 
+.calculations-container .row input,
+.calculations-container .row p-dropdown {
+    margin-left: 5px;
+}
+
 ::ng-deep .ui-fieldset-legend-text {
     font-weight: bold;
 }
@@ -10,6 +15,10 @@
     width: 600px;
     height: 600px;
     border: 1px solid;
+}
+
+.explanation-container p {
+    margin-bottom: 10px;
 }
 
 .canvas-side,
@@ -25,20 +34,10 @@
     opacity: 0.75;
 }
 
-.simulation-container button {
-    margin-right: 5px;
-    border: 1px solid #c8c8c8;
-}
-
 
 .stats-container p {
     margin: 5px;
     width: 50px;
-}
-
-.options-container .row input,
-.options-container .row p-dropdown {
-    margin-left: 5px;
 }
 
 .explanation-container {
@@ -49,9 +48,12 @@
     text-align: center;
 }
 
-.options-container,
-.stats-container {
-    margin-top: 5px;
+.explanation-container .image-container img {
+    height: 200px;
+}
+
+.calculations-container,
+.log-container {
     float: left;
 }
 
@@ -64,4 +66,15 @@
 
 #color-selection-mode-container p-radioButton{
     margin-left: 10px;
+}
+
+.calculations-container button {
+    margin-right: 5px;
+    border: 1px solid #c8c8c8;
+}
+
+.log-container textarea {
+    resize: none;
+    width: 400px;
+    height: 150px;
 }

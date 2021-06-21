@@ -20,7 +20,7 @@ export class HomeComponent {
         if (!this.navigating) {
             this.navigating = true;
             this.navigatingTo = path;
-            this.router.navigate([path]);
+            this.router.navigate([path], { skipLocationChange: true });
         }
     }
 

@@ -1,3 +1,4 @@
+import { Utils } from "src/app/shared/utils";
 import { PottsCell } from "./potts-cell";
 import { PottsModelDynamics } from "./potts-model-dynamics";
 
@@ -98,7 +99,7 @@ export class PottsModel {
      * Creates an Potts Cell with a random spin (either up or down)
      */
     createRandomPottsCell(): PottsCell {
-        const state = this.randomInteger(0, this.numberOfStates-1);
+        const state = Utils.randomInteger(0, this.numberOfStates-1);
         const cell = new PottsCell(state);
         return cell;
 
@@ -219,7 +220,7 @@ export class PottsModel {
             // attempt to flip to the neighbouring state if appropriate
             const hasNonIdenticalNeighbour = (nonIdenticalStates.length > 0);
             if (hasNonIdenticalNeighbour) {
-                const chosenIndex = this.randomInteger(0, nonIdenticalStates.length-1);
+                const chosenIndex = Utils.randomInteger(0, nonIdenticalStates.length-1);
                 const targetState = nonIdenticalStates[chosenIndex];
                 const energyDifference = this.getEnergyDifferenceFromFlipingCell(cell, targetState);
                 this.attemptGlauberFlip(cell, targetState, energyDifference);
@@ -321,15 +322,10 @@ export class PottsModel {
     private getRandomCell() {
         const xMax: number = this.width - 1;
         const yMax: number = this.height - 1;
-        const x = this.randomInteger(0,xMax);
-        const y = this.randomInteger(0,yMax);
+        const x = Utils.randomInteger(0,xMax);
+        const y = Utils.randomInteger(0,yMax);
         const target: PottsCell = this.sites[y][x];
         return target;
-    }
-
-
-    private randomInteger(min:number, max:number) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
     kroneckerDelta(firstState: number, secondState: number) {

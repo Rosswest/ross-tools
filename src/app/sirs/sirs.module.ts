@@ -4,6 +4,7 @@ import { SirsComponent } from './sirs.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { FieldsetModule } from 'primeng/fieldset';
+import { ButtonModule } from 'primeng/button';
 
 
 
@@ -14,7 +15,8 @@ import { FieldsetModule } from 'primeng/fieldset';
     FormsModule,
     ReactiveFormsModule,
     FieldsetModule,
-    DropdownModule
+    DropdownModule,
+    ButtonModule
   ]
 })
 export class SirsModule { }

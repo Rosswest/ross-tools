@@ -34,9 +34,9 @@
                     <input type="checkbox" name="repaintInput" [(ngModel)]="repaintOnUpdate"><br>
                 </div>
                 <div class="row">
-                    <button (click)="toggleRunning()">{{ running ? "Stop" : "Start"}}</button>
-                    <button [disabled]="running" (click)="tick()">Step</button>
-                    <button [disabled]="running" (click)="reset()">Reset</button>
+                    <button pButton type="button" label="{{ running ? 'Stop' : 'Start'}}" (click)="toggleRunning()"></button>
+                    <button pButton type="button" label="Step" [disabled]="running" (click)="tick()"></button>
+                    <button pButton type="button" label="Reset" [disabled]="running" (click)="reset()"></button>
                 </div>
             </p-fieldset>
         </div>
@@ -77,8 +77,8 @@
                         <input type="checkbox" name="automaticApplyInput" [(ngModel)]="automaticallyApplySettings"><br>
                     </div>
                     <div class="row">
-                        <button (click)="applySettings()">Apply</button>
-                        <button (click)="resetSettings()">Reset</button>
+                        <button pButton type="button" label="Apply" (click)="applySettings()"></button>
+                        <button pButton type="button" label="Reset" (click)="resetSettings()"></button>
                     </div>
             </p-fieldset>
         </div>
