@@ -155,9 +155,11 @@ export class GeometryComponent implements OnInit {
 
   reset() {
     this.points = [];
+    this.model = undefined;
     if (this.initialised) {
       this.repaint();
     }
+    this.drawReadyScreen();
   }
 
   actOnClick(event: any) {
