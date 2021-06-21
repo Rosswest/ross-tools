@@ -1,3 +1,4 @@
+import { Utils } from "src/app/shared/utils";
 import { IsingCell } from "./ising-cell";
 import { IsingModelDynamics } from "./ising-model-dynamics";
 import { IsingState } from "./ising-state";
@@ -300,15 +301,10 @@ export class IsingModel {
     private getRandomCell() {
         const xMax: number = this.width - 1;
         const yMax: number = this.height - 1;
-        const x = this.randomInteger(0,xMax);
-        const y = this.randomInteger(0,yMax);
+        const x = Utils.randomInteger(0,xMax);
+        const y = Utils.randomInteger(0,yMax);
         const target: IsingCell = this.sites[y][x];
         return target;
     }
-
-
-    private randomInteger(min:number, max:number) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-      }
 
 }
