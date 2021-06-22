@@ -53,7 +53,7 @@ export class QuickHull {
         const segment: Vector2D[] = [];
         let mostDistantPoint = null;
         let greatestDistance = null;
-        console.log(candidates.length);
+
         if (candidates.length == 1) {
             segment.push(candidates[0]);
         } else if (candidates.length == 0) {
@@ -68,14 +68,14 @@ export class QuickHull {
                     const startDistance = Vector2D.distanceBetweenPoints(point,lineStart);
                     const endDistance = Vector2D.distanceBetweenPoints(point,lineEnd);
                     const distance = Math.min(lineDistance,startDistance,endDistance);
-                    console.log(lineDistance,startDistance,endDistance);
+
                     greatestDistance = distance;
                 } else {
                     const lineDistance = Vector2D.distanceFromPointToLine(lineStart,mostDistantPoint,point);
                     const startDistance = Vector2D.distanceBetweenPoints(point,lineStart);
                     const endDistance = Vector2D.distanceBetweenPoints(point,lineEnd);
                     const distance = Math.min(lineDistance,startDistance,endDistance);
-                    console.log(lineDistance,startDistance,endDistance);
+
                     if (distance > greatestDistance) {
                         mostDistantPoint = point;
                         greatestDistance = distance;
@@ -90,8 +90,6 @@ export class QuickHull {
             for (const candidate of candidates) {
                 if (!Vector2D.isInsidePolygon(polygon, candidate)) {
                     newCandidates.push(candidate);
-                } else {
-                    console.log("Removed point");
                 }
             }
             candidates = newCandidates;

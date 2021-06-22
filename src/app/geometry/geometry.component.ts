@@ -79,7 +79,6 @@ export class GeometryComponent implements OnInit {
     this.drawReadyScreen();
     this.running = false;
     this.initialised = true;
-    console.log(Vector2D.distanceFromPointToLine(new Vector2D(0,0), new Vector2D(0,5), new Vector2D(2,2)))
   }
 
   drawReadyScreen() {

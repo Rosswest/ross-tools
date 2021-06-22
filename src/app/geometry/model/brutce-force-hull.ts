@@ -28,7 +28,6 @@ export class BruteForceHull {
             for (let i=0; i < pointCount; i++) {
                 lineStart = points[i];
                 for (let j = i+1; j < pointCount; j++) {
-                    // console.log("points",JSON.stringify(points));
                     lineEnd = points[j];
                     const otherPoints = Utils.getArrayWithoutElements(points, [lineStart,lineEnd]);
                     const grouped = Vector2D.groupPointsByOrientation(lineStart,lineEnd,otherPoints);
@@ -68,7 +67,6 @@ export class BruteForceHull {
     }
 
     convertLineSegmentsToHull(segments: Set<any>) {
-        console.log(JSON.stringify(segments));
         const handledPoints = new Set<Vector2D>();
         const hull = [];
         let complete = false;
@@ -91,18 +89,15 @@ export class BruteForceHull {
             }
         }
 
-        console.log("first segment",firstSegment);
         let segment = firstSegment;
 
         while (!complete) {
 
-            console.log(JSON.stringify(segment));
             // add this segments start point to the hull
             const startPoint = segment.start;
             hull.push(startPoint);
             const endPoint = segment.end;
 
-            console.log(segment, segmentsAsArray);
 
             //find a segment with a start point that matches this segments end point
             const matchingSegment = segmentsAsArray.find(segment=>{

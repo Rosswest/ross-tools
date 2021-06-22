@@ -268,9 +268,7 @@ static doIntersect(p1:any,q1:any,p2:any,q2:any)
     public static ccw(start: Vector2D, a: Vector2D, b: Vector2D) : boolean {
         const oa = Vector2D.subtract(a,start);
         const ob = Vector2D.subtract(b,start);
-        console.log(oa,ob);
         const angle = Vector2D.angleBetweenRadiansDirectional(oa,ob);
-        console.log(angle);
         const isCounterClockwise = (angle > 0);
         return isCounterClockwise;
     }
