@@ -3,7 +3,9 @@ import { Utils } from '../shared/utils';
 import { BruteForceHull } from './model/brutce-force-hull';
 import { DivideAndConquerHull } from './model/divide-and-conquer-hull';
 import { Explanation } from './model/explanation';
+import { GrahamScanHull } from './model/graham-scan-hull';
 import { QuickHull } from './model/quick-hull';
+import { Vector2D } from './model/vector2D';
 
 @Component({
   selector: 'app-geometry',
@@ -21,7 +23,7 @@ export class GeometryComponent implements OnInit {
   private context: CanvasRenderingContext2D;
   private osContext: OffscreenCanvasRenderingContext2D;
 
-  points: any[];
+  points: Vector2D[];
   convexHullPoints: any[];
 
   selectedCalculation: any;
@@ -36,6 +38,7 @@ export class GeometryComponent implements OnInit {
     'convex-hull': [
       {label: 'Brute Force', value: 'brute-force', info: Explanation.CONVEX_HULL_BRUTE_FORCE, imagePath: 'assets/geometry/convex-hull-brute-force.svg'},
       {label: 'Quick Hull', value: 'quick-hull', info: Explanation.CONVEX_HULL_QUICK_HULL, imagePath: 'assets/geometry/convex-hull-quick-hull.svg'},
+      {label: 'Graham Scan', value: 'graham-scan', info: Explanation.CONVEX_HULL_GRAHAM_SCAN, imagePath: 'assets/geometry/convex-hull-graham-scan.svg'},
       {label: 'Divide & Conquer', value: 'divide-and-conquer', info: Explanation.CONVEX_HULL_DIVIDE_AND_CONQUER, imagePath: 'assets/geometry/convex-hull-divide-conquer.svg'}
     ],
     'test': [
@@ -76,6 +79,7 @@ export class GeometryComponent implements OnInit {
     this.drawReadyScreen();
     this.running = false;
     this.initialised = true;
+    console.log(Vector2D.distanceFromPointToLine(new Vector2D(0,0), new Vector2D(0,5), new Vector2D(2,2)))
   }
 
   drawReadyScreen() {
@@ -97,32 +101,31 @@ export class GeometryComponent implements OnInit {
 
   updateAlgorithmOptions() {
     const calculation = this.selectedCalculation['value'];
-    console.log(calculation);
     const options = this.algorithmOptionsList[calculation];
-    console.log(this.algorithmOptionsList);
-    console.log(options);
     this.algorithmOptions = options;
   }
 
   repaint() {
     const width = this.pointsCanvas.nativeElement.width;
     const height = this.pointsCanvas.nativeElement.height;
-    this.osContext.strokeStyle = 'black';
     this.osContext.fillStyle = 'white';
     this.osContext.fillRect(0,0,width,height);
-    this.osContext.fillStyle = 'black';
 
+    this.osContext.strokeStyle = 'black';
     this.osContext.fillStyle = 'black';
     for (const point of this.points) {
-      this.osContext.fillRect(point.x,point.y,2,2);
+      const displayY = height - point.y;
+      this.osContext.fillRect(point.x,displayY,2,2);
     }
 
     this.osContext.fillStyle = 'red';
     if (this.model != undefined) {
       for (const segment of this.model.segments) {
         this.osContext.beginPath();
-        this.osContext.moveTo(segment.start.x,segment.start.y);
-        this.osContext.lineTo(segment.end.x,segment.end.y);
+        const startY = height - segment.start.y;
+        const endY = height - segment.end.y;
+        this.osContext.moveTo(segment.start.x,startY);
+        this.osContext.lineTo(segment.end.x,endY);
         this.osContext.stroke();
         this.osContext.closePath();
       }
@@ -130,7 +133,8 @@ export class GeometryComponent implements OnInit {
 
     this.osContext.beginPath();
     for (const point of this.convexHullPoints) {
-      this.osContext.lineTo(point.x,point.y);
+      const displayY = height - point.y;
+      this.osContext.lineTo(point.x,displayY);
       this.osContext.stroke();
     }
 
@@ -146,13 +150,6 @@ export class GeometryComponent implements OnInit {
     onScreenContext.drawImage(this.offScreenCanvas, 0, 0);
   }
 
-  getColor(i: number, totalColors: number) {
-    const n = 255 * (i / totalColors);
-    const color = `rgb(${n},100,${n})`;
-    // console.log(color);
-    return color;
-  }
-
   reset() {
     this.points = [];
     this.model = undefined;
@@ -163,16 +160,15 @@ export class GeometryComponent implements OnInit {
   }
 
   actOnClick(event: any) {
-    console.log(event);
+    const height = this.pointsCanvas.nativeElement.height;
     const eventX = event.offsetX;
-    const eventY = event.offsetY;
+    const eventY = height - event.offsetY;
     const selectedTool = this.selectedTool.value;
     if (selectedTool == 'add-point') {
       this.addPoint(eventX,eventY);
       this.repaint();
     } else if (selectedTool == 'add-cluster') {
       const width = this.pointsCanvas.nativeElement.width;
-      const height = this.pointsCanvas.nativeElement.height;
       const minX = Math.max(0,eventX-50);
       const minY = Math.max(0,eventY-50);
       const maxX = Math.min(width,eventX+50);
@@ -191,7 +187,7 @@ export class GeometryComponent implements OnInit {
   }
 
   addPoint(x: number, y: number) {
-    const point = {x,y};
+    const point = new Vector2D(x,y);
     this.points.push(point);
   }
 
@@ -201,10 +197,11 @@ export class GeometryComponent implements OnInit {
     if (this.points.length < 1) {
       this.addLog("Please add some points to the canvas before calculating");
     } else {
+      const pointsWithoutDuplicates = Vector2D.removeDuplicatePoints(this.points);
       const start = new Date().getTime();
       const selectedCalculation = this.selectedCalculation.value;
       if (selectedCalculation == 'convex-hull') {
-        this.calculateConvexHull();
+        this.calculateConvexHull(pointsWithoutDuplicates);
       } else if (selectedCalculation == 'test') {
         this.addLog("Not an actual calculation");
       }
@@ -225,15 +222,17 @@ export class GeometryComponent implements OnInit {
     this.logArea.nativeElement.scrollTop = this.logArea.nativeElement.scrollHeight;
   }
 
-  calculateConvexHull() {
+  calculateConvexHull(points: Vector2D[]) {
     const start = new Date().getTime();
     const selectedAlgorithm = this.selectedAlgorithm.value;
     if (selectedAlgorithm == 'quick-hull') {
-      this.model = new QuickHull(this.points);
+      this.model = new QuickHull(points);
     } else if (selectedAlgorithm == 'divide-and-conquer') {
-      this.model = new DivideAndConquerHull(this.points);
+      this.model = new DivideAndConquerHull(points);
     } else if (selectedAlgorithm == 'brute-force') {
-      this.model = new BruteForceHull(this.points);
+      this.model = new BruteForceHull(points);
+    } else if (selectedAlgorithm == 'graham-scan') {
+      this.model = new GrahamScanHull(points);
     }
     const end = new Date().getTime();
     const dur = end - start;

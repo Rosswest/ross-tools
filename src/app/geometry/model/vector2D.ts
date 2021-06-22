@@ -1,3 +1,5 @@
+import { Utils } from "src/app/shared/utils";
+
 export class Vector2D {
     x: number;
     y: number;
@@ -65,7 +67,11 @@ export class Vector2D {
     }
 
     public static distanceFromPointToLine(lineStart: Vector2D, lineEnd: Vector2D, point: Vector2D) {
-        return Math.abs((point.y - lineStart.y) * (lineEnd.x - lineStart.x) - (lineEnd.y - lineStart.y) * (point.x - lineStart.x));
+        const line = Vector2D.subtract(lineEnd,lineStart);
+        const numerator = Math.abs(line.x * (lineStart.y - point.y) - line.y * (lineStart.x - point.x));
+        const value = numerator / line.magnitude();
+        return value;
+        // return Math.abs((point.y - lineStart.y) * (lineEnd.x - lineStart.x) - (lineEnd.y - lineStart.y) * (point.x - lineStart.x));
     }
 
     public static isInsidePolygon(polygon: Vector2D[], point: Vector2D): boolean {
@@ -205,5 +211,79 @@ static doIntersect(p1:any,q1:any,p2:any,q2:any)
         };
 
         return result;
+    }
+
+    /**
+     * @param a The first vector
+     * @param b The second vector
+     * @returns The cross product of the the vectors as a scalar
+     */
+    public static crossProduct(a: Vector2D, b: Vector2D): number {
+        const z = (a.x * b.y) - (a.y * b.x);
+        return z;
+    }
+
+    /**
+     *  |aXb| = |a||b|sin(angle)
+     * @param a The first vector
+     * @param b The second vector
+     * @returns The angle between the two vectors in radians. Positive indicates a counter-clockwise turn between A and B.
+     */
+    public static angleBetweenRadiansDirectional(a: Vector2D, b: Vector2D): number {
+        const crossProduct = Vector2D.crossProduct(a,b);
+        const aMagnitude = a.magnitude();
+        const bMagnitude = b.magnitude();
+        const angle = Math.asin(crossProduct/(aMagnitude*bMagnitude));
+        return angle;
+    }
+
+    /**
+     * @param a The first vector
+     * @param b The second vector
+     * @returns The angle between the two vectors in degrees. Positive indicates a clockwise turn between A and B.
+     */
+    public static angleBetweenDegreesDirectional(a: Vector2D, b: Vector2D): number {
+        const angleInRadians = this.angleBetweenRadiansDirectional(a,b);
+        const angleInDegrees = Utils.radiansToDegrees(angleInRadians);
+        return angleInDegrees;
+    }
+
+    /* a.b = |a||b|cos(angle) */
+    public static angleWithXAxis(a: Vector2D,b: Vector2D): number {
+        const dot = Vector2D.dotProduct(a,b);
+        const angle = Math.acos(dot/(a.magnitude()*b.magnitude()));
+        return angle;
+    }
+
+    public static removeDuplicatePoints(points: Vector2D[]): Vector2D[] {
+        const uniquePoints = new Map<string,Vector2D>();
+        for (const point of points) {
+            const key = point.x + ',' + point.y;
+            uniquePoints.set(key,point);
+        }
+        
+        return Array.from(uniquePoints.values());
+    }
+
+    public static ccw(start: Vector2D, a: Vector2D, b: Vector2D) : boolean {
+        const oa = Vector2D.subtract(a,start);
+        const ob = Vector2D.subtract(b,start);
+        console.log(oa,ob);
+        const angle = Vector2D.angleBetweenRadiansDirectional(oa,ob);
+        console.log(angle);
+        const isCounterClockwise = (angle > 0);
+        return isCounterClockwise;
+    }
+
+    public static angleBetweenDegrees(a: Vector2D,b: Vector2D) {
+        const angleInRadians = this.angleBetweenRadians(a,b);
+        const angleInDegrees = Utils.radiansToDegrees(angleInRadians);
+        return angleInDegrees;
+    }
+
+    public static angleBetweenRadians(a: Vector2D,b: Vector2D) {
+        const dot = Vector2D.dotProduct(a,b);
+        const angle = Math.acos(dot/(a.magnitude()*b.magnitude()));
+        return angle
     }
 }
