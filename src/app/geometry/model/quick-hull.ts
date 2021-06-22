@@ -16,7 +16,7 @@ export class QuickHull {
         this.hullPoints = [];
         this.leftMost = this.findLeftMostPoint();
         this.rightMost = this.findRightMostPoint();
-        this.process();
+        this.process(allPoints);
     }
 
     sortPointsByX(points: Vector2D[]) {
@@ -25,151 +25,93 @@ export class QuickHull {
         });
     }
 
-    private process() {
-        const hull = this.bruteForceHull(this.allPoints);
+    private process(points: Vector2D[]) {
+        const hull = [];
+        const lineStart = this.leftMost;
+        const lineEnd = this.rightMost;
+        const orientedPoints = Vector2D.groupPointsByOrientation(lineStart,lineEnd,points);
+        const leftPoints = orientedPoints.antiClockwise;
+        const rightPoints = orientedPoints.clockwise;
+        const leftHull = this.subHull(this.leftMost,this.rightMost, leftPoints);
+        const rightHull = this.subHull(this.rightMost,this.leftMost, rightPoints);
+
+        //merge the sub-segments into the main hull
+        hull.push(this.leftMost);
+        for (const point of leftHull) {
+            hull.push(point);
+        }
+        hull.push(this.rightMost);
+        for (const point of rightHull) {
+            hull.push(point);
+        }
+        hull.push(this.leftMost);
+        
         this.hullPoints = hull;
     }
 
-    divideAndConquerHull(points: Vector2D[]) {
-        if (points.length < 6) {
-            return this.bruteForceHull(points);
+    private subHull(lineStart: Vector2D, lineEnd: Vector2D, candidates: Vector2D[]): Vector2D[] {
+        const segment: Vector2D[] = [];
+        let mostDistantPoint = null;
+        let greatestDistance = null;
+        console.log(candidates.length);
+        if (candidates.length == 1) {
+            segment.push(candidates[0]);
+        } else if (candidates.length == 0) {
+            return [];
         } else {
-            const xSortedPoints = this.sortPointsByX(points);
-            const midPointIndex = Math.floor(xSortedPoints.length / 2);
-            const leftPoints = [];
-            const rightPoints = [];
-            for (let i = 0; i < midPointIndex; i++) {
-                const point = xSortedPoints[i];
-                leftPoints.push(point);
-            }
-            for (let i = midPointIndex; i < xSortedPoints.length; i++) {
-                const point = xSortedPoints[i];
-                rightPoints.push(point);
-            }
-
-            const leftHull = this.divideAndConquerHull(leftPoints);
-            const rightHull = this.divideAndConquerHull(rightPoints);
-            const mergedHull = this.mergeHulls(leftHull,rightHull);
-            return mergedHull;
-        }
-    }
-
-    bruteForceHull(points: Vector2D[]): Vector2D[] {
-        const segments: Set<any> = new Set<any>();
-
-        let hull: Vector2D[] = [];
-        const pointCount = points.length
-
-        let lineStart = null;
-        let lineEnd = null;
-
-        if (pointCount > 3) {
-            for (let i=0; i < pointCount; i++) {
-                lineStart = points[i];
-                for (let j = i+1; j < pointCount; j++) {
-                    // console.log("points",JSON.stringify(points));
-                    lineEnd = points[j];
-                    const otherPoints = Utils.getArrayWithoutElements(points, [lineStart,lineEnd]);
-                    const grouped = Vector2D.groupPointsByOrientation(lineStart,lineEnd,otherPoints);
-                    const hasClockwisePoints = (grouped.clockwise.length > 0);
-                    const hasAntiClockwisePoints = (grouped.antiClockwise.length > 0);
-                    const isOnConvexHull = Utils.exclusiveOr(hasClockwisePoints,hasAntiClockwisePoints);
-                    if (isOnConvexHull) {
-                        segments.add({start: lineStart, end: lineEnd});
+            
+            // find the most distant point
+            for (const point of candidates) {
+                if (mostDistantPoint == null) {
+                    mostDistantPoint = point;
+                    const lineDistance = Vector2D.distanceFromPointToLine(lineStart,mostDistantPoint,point);
+                    const startDistance = Vector2D.distanceBetweenPoints(point,lineStart);
+                    const endDistance = Vector2D.distanceBetweenPoints(point,lineEnd);
+                    const distance = Math.min(lineDistance,startDistance,endDistance);
+                    console.log(lineDistance,startDistance,endDistance);
+                    greatestDistance = distance;
+                } else {
+                    const lineDistance = Vector2D.distanceFromPointToLine(lineStart,mostDistantPoint,point);
+                    const startDistance = Vector2D.distanceBetweenPoints(point,lineStart);
+                    const endDistance = Vector2D.distanceBetweenPoints(point,lineEnd);
+                    const distance = Math.min(lineDistance,startDistance,endDistance);
+                    console.log(lineDistance,startDistance,endDistance);
+                    if (distance > greatestDistance) {
+                        mostDistantPoint = point;
+                        greatestDistance = distance;
                     }
                 }
             }
 
-            // translate the segments to hull points
-            // hull = this.convertLineSegmentsToHull(segments);
-            for (const segment of segments) {
-                this.segments.add(segment);
-            }
-        } else {
-            const firstPoint = points[0];
-            let previous = points[0];
-            let i = 0;
-            for (const point of points) {
-                if (i > 0) {
-                    const startPoint = previous;
-                    const endPoint = point;
-                    this.segments.add({start: startPoint, end: endPoint});
+
+            // remove candidates that are within the new triangle
+            const newCandidates = [];
+            const polygon = [lineStart,lineEnd,mostDistantPoint,lineStart];
+            for (const candidate of candidates) {
+                if (!Vector2D.isInsidePolygon(polygon, candidate)) {
+                    newCandidates.push(candidate);
+                } else {
+                    console.log("Removed point");
                 }
-                previous = point;
-                i++;
             }
-            this.segments.add({start: previous, end: firstPoint});
+            candidates = newCandidates;
 
-            // hull = points;
-        }
-
-        return [];
-    }
-
-    convertLineSegmentsToHull(segments: Set<any>) {
-        console.log(JSON.stringify(segments));
-        const handledPoints = new Set<Vector2D>();
-        const hull = [];
-        let complete = false;
-        const segmentsAsArray = Array.from(segments);
-        let noMatchingEnd = null;
-        let noMatchingStart = null;
-
-        // the first segment will have a start point with no matching previous segment
-        let firstSegment = null;
-        for (const segment of segments) {
-            const startPoint = segment.start
-            const matchingStartSegment = segmentsAsArray.find(candidate=>{
-                const xMatch = candidate.end.x == startPoint.x;
-                const yMatch = candidate.end.y == startPoint.y;
-                return (xMatch && yMatch);
-            });
-            if (matchingStartSegment == undefined) {
-                firstSegment = segment;
-                break;
-            }
-        }
-
-        console.log("first segment",firstSegment);
-        let segment = firstSegment;
-
-        while (!complete) {
-
-            console.log(JSON.stringify(segment));
-            // add this segments start point to the hull
-            const startPoint = segment.start;
-            hull.push(startPoint);
-            const endPoint = segment.end;
-
-            console.log(segment, segmentsAsArray);
-
-            //find a segment with a start point that matches this segments end point
-            const matchingSegment = segmentsAsArray.find(segment=>{
-                const xMatch = segment.start.x == endPoint.x;
-                const yMatch = segment.start.y == endPoint.y;
-                return (xMatch && yMatch);
-            });
-
-            // handle that segment next
-            segment = matchingSegment;
+            const orientedPoints = Vector2D.groupPointsByOrientation(lineStart,lineEnd,candidates);
+            const leftPoints = orientedPoints.antiClockwise;
+            const rightPoints = orientedPoints.clockwise;
+            const leftHull = this.subHull(lineStart, mostDistantPoint,leftPoints);
+            const rightHull = this.subHull(mostDistantPoint, lineEnd, rightPoints);
             
-            // end the iterations once we have the right number of points
-            complete = (hull.length == segments.size);
+            for (const point of leftHull) {
+                segment.push(point);
+            }
+            segment.push(mostDistantPoint);
+            for (const point of rightHull) {
+                segment.push(point);
+            }
         }
 
-        return hull;
-    }
-
-    mergeHulls(firstHull: Vector2D[], secondHull: Vector2D[]): Vector2D[] {
-        console.log("joining", firstHull.length, secondHull.length);
-        const merged = [];
-        for (const point of firstHull) {
-            merged.push(point);
-        }
-        for (const point of secondHull) {
-            merged.push(point);
-        }
-        return merged;
+        return segment;
     }
 
     // find point with minimum x, tie-breaking with minimum y

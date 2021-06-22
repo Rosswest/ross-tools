@@ -3,7 +3,6 @@ import { Utils } from "src/app/shared/utils";
 export class Vector2D {
     x: number;
     y: number;
-    polarAngle?: number;
 
     constructor(x: number, y: number) {
         this.x = x;
@@ -68,7 +67,11 @@ export class Vector2D {
     }
 
     public static distanceFromPointToLine(lineStart: Vector2D, lineEnd: Vector2D, point: Vector2D) {
-        return Math.abs((point.y - lineStart.y) * (lineEnd.x - lineStart.x) - (lineEnd.y - lineStart.y) * (point.x - lineStart.x));
+        const line = Vector2D.subtract(lineEnd,lineStart);
+        const numerator = Math.abs(line.x * (lineStart.y - point.y) - line.y * (lineStart.x - point.x));
+        const value = numerator / line.magnitude();
+        return value;
+        // return Math.abs((point.y - lineStart.y) * (lineEnd.x - lineStart.x) - (lineEnd.y - lineStart.y) * (point.x - lineStart.x));
     }
 
     public static isInsidePolygon(polygon: Vector2D[], point: Vector2D): boolean {

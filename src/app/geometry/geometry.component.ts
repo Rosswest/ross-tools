@@ -79,7 +79,7 @@ export class GeometryComponent implements OnInit {
     this.drawReadyScreen();
     this.running = false;
     this.initialised = true;
-
+    console.log(Vector2D.distanceFromPointToLine(new Vector2D(0,0), new Vector2D(0,5), new Vector2D(2,2)))
   }
 
   drawReadyScreen() {
@@ -238,7 +238,7 @@ export class GeometryComponent implements OnInit {
     const dur = end - start;
     this.convexHullPoints = this.model.hullPoints;
     console.log("points",this.convexHullPoints);
-    console.log("segments",this.convexHullPoints);
+    console.log("segments",this.model.segments);
     this.repaint();
   }
 
