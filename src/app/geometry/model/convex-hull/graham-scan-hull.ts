@@ -1,9 +1,11 @@
 import { Utils } from "src/app/shared/utils";
-import { Vector2D } from "./vector2D";
+import { GeometryUtils } from "../GeometryUtils";
+import { Vector2D } from "../vector2D";
+import { Edge2D } from "../edge-2d";
 
 export class GrahamScanHull {
     hullPoints: Vector2D[];
-    segments: any[] = [];
+    segments: Edge2D[] = [];
 
     constructor(points: Vector2D[]) {
         this.hullPoints = [];
@@ -17,14 +19,14 @@ export class GrahamScanHull {
         let previousPoint = this.hullPoints[0];
         for (let i = 1; i < this.hullPoints.length; i++) {
             const currentPoint = this.hullPoints[i];
-            const segment = {start: previousPoint, end: currentPoint};
+            const segment = new Edge2D(previousPoint,currentPoint);
             segments.push(segment);
             previousPoint = currentPoint;
         }
 
-        const segment = {start: previousPoint, end: this.hullPoints[0]};
+        const segment = new Edge2D(previousPoint,this.hullPoints[0]);
         segments.push(segment);
-        this.segments = segments;
+        this.segments = GeometryUtils.getUniqueEdges(segments);
     }
 
     private process(points: Vector2D[]) {

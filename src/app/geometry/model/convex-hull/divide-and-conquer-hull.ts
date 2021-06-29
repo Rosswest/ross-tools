@@ -1,4 +1,4 @@
-import { Vector2D } from "./vector2D";
+import { Vector2D } from "../vector2D";
 
 export class DivideAndConquerHull {
     allPoints: Vector2D[];

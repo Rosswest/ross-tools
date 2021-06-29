@@ -4,6 +4,8 @@ export class Vector2D {
     x: number;
     y: number;
 
+    public static readonly ORIGIN: Vector2D = new Vector2D(0,0);
+
     constructor(x: number, y: number) {
         this.x = x;
         this.y = y;
@@ -23,11 +25,18 @@ export class Vector2D {
         return result;
     }
 
-    public static distanceBetweenPoints(a: Vector2D, b: Vector2D) {
+    public static euclideanDistance(a: Vector2D, b: Vector2D) {
         const xDiff = b.x - a.x;
         const yDiff = b.y - a.y;
         const relativeVector = new Vector2D(xDiff, yDiff);
         const distance = relativeVector.magnitude();
+        return distance;
+    }
+
+    public static manhattanDistance(a: Vector2D, b: Vector2D) {
+        const xDiff = b.x - a.x;
+        const yDiff = b.y - a.y;
+        const distance = Math.abs(xDiff) + Math.abs(yDiff);
         return distance;
     }
 

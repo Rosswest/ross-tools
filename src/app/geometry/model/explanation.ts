@@ -16,9 +16,10 @@ export class Explanation {
                                                                 the next until we have a full convex hull for the initial set of points. The hulls are merged by finding the upper and lower tangents for the two smaller hulls, \
                                                                 i.e. a line which is collinear to one point on each hull, and is either above (upper) or below (lower) the rest of the points on both hulls. The points these lines \
                                                                 bypass on each hull are then removed and the remaining points taken to be the convex hull.';
-    
     public static readonly CONVEX_HULL_GRAHAM_SCAN: string = 'The graham scan operates on a relatively simple principle - once we hit upon a point on the convex hull, the point with the lowest polar angle relative to it will be next in the chain. \
                                                                 This iteration is done until we arrive back where we started, forming the complete convex hull.';
-    
+    public static readonly POLYGON_TRIANGULATION: string = '';
+    public static readonly VORONOI_DIAGRAM: string = '';
+    public static readonly LARGEST_EMPTY_CIRCLE: string = '';                              
     public static readonly TEST: string = 'Not a real calculation';
 }

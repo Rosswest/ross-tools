@@ -1,11 +1,13 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Utils } from '../shared/utils';
-import { BruteForceHull } from './model/brutce-force-hull';
-import { DivideAndConquerHull } from './model/divide-and-conquer-hull';
+import { BruteForceHull } from './model/convex-hull/brutce-force-hull';
 import { Explanation } from './model/explanation';
-import { GrahamScanHull } from './model/graham-scan-hull';
-import { QuickHull } from './model/quick-hull';
+import { QuickHull } from './model/convex-hull/quick-hull';
 import { Vector2D } from './model/vector2D';
+import { GrahamScanHull } from './model/convex-hull/graham-scan-hull';
+import { DivideAndConquerHull } from './model/convex-hull/divide-and-conquer-hull';
+import { GeometryUtils } from './model/GeometryUtils';
+import { Edge2D } from './model/edge-2d';
 
 @Component({
   selector: 'app-geometry',
@@ -24,11 +26,15 @@ export class GeometryComponent implements OnInit {
   private osContext: OffscreenCanvasRenderingContext2D;
 
   points: Vector2D[];
-  convexHullPoints: any[];
+  convexHullEdges: Edge2D[];
+  triangulationEdges: Edge2D[];
 
   selectedCalculation: any;
   calculationOptions: any[] = [
     {label: 'Convex Hull', value: 'convex-hull', info: Explanation.CONVEX_HULL},
+    {label: 'Polygon Triangulation', value: 'polygon-triangulation', info: Explanation.POLYGON_TRIANGULATION},
+    {label: 'Voronoi Diagram', value: 'voronoi-diagram', info: Explanation.VORONOI_DIAGRAM},
+    {label: 'Largest Empty Circle', value: 'largest-empty-circle', info: Explanation.LARGEST_EMPTY_CIRCLE},
     {label: 'Test', value: 'test', info: Explanation.TEST}
   ];
 
@@ -41,10 +47,15 @@ export class GeometryComponent implements OnInit {
       {label: 'Graham Scan', value: 'graham-scan', info: Explanation.CONVEX_HULL_GRAHAM_SCAN, imagePath: 'assets/geometry/convex-hull-graham-scan.svg'},
       {label: 'Divide & Conquer', value: 'divide-and-conquer', info: Explanation.CONVEX_HULL_DIVIDE_AND_CONQUER, imagePath: 'assets/geometry/convex-hull-divide-conquer.svg'}
     ],
-    'test': [
-      {label: 'One', value: 'one'},
-      {label: 'Two', value: 'two'},
-      {label: 'Three', value: 'three'}
+    'polygon-triangulation': [
+      {label: 'Delaunay Triangulation', value: 'delaunay'}
+    ],
+    'voronoi-diagram': [
+      {label: 'Euclidean Distance', value: 'euclidean-distance'},
+      {label: 'Manhattan Distance', value: 'manhattan-distance'}
+    ],
+    'largest-empty-circle': [
+      {label: 'One', value: 'one'}
     ]
   };
 
@@ -71,7 +82,6 @@ export class GeometryComponent implements OnInit {
     this.updateAlgorithmOptions();
     this.selectedAlgorithm = this.algorithmOptions[0];
     this.points = [];
-    this.convexHullPoints = [];
     this.logs = [];
     this.logsString = '';
     this.reset();
@@ -79,6 +89,7 @@ export class GeometryComponent implements OnInit {
     this.drawReadyScreen();
     this.running = false;
     this.initialised = true;
+
   }
 
   drawReadyScreen() {
@@ -110,34 +121,50 @@ export class GeometryComponent implements OnInit {
     this.osContext.fillStyle = 'white';
     this.osContext.fillRect(0,0,width,height);
 
+    this.drawPoints();
+    this.drawHullSegments();
+    this.drawTriangulationEdges();
+
+    this.copyToOnScreen();
+  }
+
+  drawPoints() {
+    const height = this.pointsCanvas.nativeElement.height;
     this.osContext.strokeStyle = 'black';
     this.osContext.fillStyle = 'black';
     for (const point of this.points) {
       const displayY = height - point.y;
       this.osContext.fillRect(point.x,displayY,2,2);
     }
+  }
+  drawHullSegments() {
+    const height = this.pointsCanvas.nativeElement.height;
+    if (this.convexHullEdges != undefined) {
+      for (const segment of this.convexHullEdges) {
+      this.osContext.beginPath();
+      const startY = height - segment.start.y;
+      const endY = height - segment.end.y;
+      this.osContext.moveTo(segment.start.x,startY);
+      this.osContext.lineTo(segment.end.x,endY);
+      this.osContext.stroke();
+      this.osContext.closePath();
+      }
+    }
+  }
 
-    this.osContext.fillStyle = 'red';
-    if (this.model != undefined) {
-      for (const segment of this.model.segments) {
+  drawTriangulationEdges() {
+    const height = this.pointsCanvas.nativeElement.height;
+    if (this.triangulationEdges != undefined) {
+        for (const edge of this.triangulationEdges) {
         this.osContext.beginPath();
-        const startY = height - segment.start.y;
-        const endY = height - segment.end.y;
-        this.osContext.moveTo(segment.start.x,startY);
-        this.osContext.lineTo(segment.end.x,endY);
+        const startY = height - edge.start.y;
+        const endY = height - edge.end.y;
+        this.osContext.moveTo(edge.start.x,startY);
+        this.osContext.lineTo(edge.end.x,endY);
         this.osContext.stroke();
         this.osContext.closePath();
       }
     }
-
-    this.osContext.beginPath();
-    for (const point of this.convexHullPoints) {
-      const displayY = height - point.y;
-      this.osContext.lineTo(point.x,displayY);
-      this.osContext.stroke();
-    }
-
-    this.copyToOnScreen();
   }
 
   copyToOnScreen() {
@@ -201,6 +228,10 @@ export class GeometryComponent implements OnInit {
       const selectedCalculation = this.selectedCalculation.value;
       if (selectedCalculation == 'convex-hull') {
         this.calculateConvexHull(pointsWithoutDuplicates);
+      } else if (selectedCalculation == 'polygon-triangulation') {
+        this.calculateTriangulation(pointsWithoutDuplicates);
+      } else if (selectedCalculation == 'test') {
+        this.addLog("Not an actual calculation");
       } else if (selectedCalculation == 'test') {
         this.addLog("Not an actual calculation");
       }
@@ -222,7 +253,6 @@ export class GeometryComponent implements OnInit {
   }
 
   calculateConvexHull(points: Vector2D[]) {
-    const start = new Date().getTime();
     const selectedAlgorithm = this.selectedAlgorithm.value;
     if (selectedAlgorithm == 'quick-hull') {
       this.model = new QuickHull(points);
@@ -233,11 +263,18 @@ export class GeometryComponent implements OnInit {
     } else if (selectedAlgorithm == 'graham-scan') {
       this.model = new GrahamScanHull(points);
     }
-    const end = new Date().getTime();
-    const dur = end - start;
-    this.convexHullPoints = this.model.hullPoints;
-    console.log("points",this.convexHullPoints);
+    this.convexHullEdges = this.model.segments;
     console.log("segments",this.model.segments);
+    this.repaint();
+  }
+
+  calculateTriangulation(points: Vector2D[]) {
+    const selectedAlgorithm = this.selectedAlgorithm.value;
+    if (selectedAlgorithm == 'delaunay-triangulation') {
+      this.model = new QuickHull(points);
+    }
+    this.triangulationEdges = this.model.triangulationEdges;
+    console.log("triangulation edges",this.triangulationEdges);
     this.repaint();
   }
 

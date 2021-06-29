@@ -1,17 +1,18 @@
 import { Utils } from "src/app/shared/utils";
-import { Vector2D } from "./vector2D";
+import { Vector2D } from "../vector2D";
+import { Edge2D } from "../edge-2d";
 
 export class QuickHull {
     allPoints: Vector2D[];
     hullPoints: Vector2D[];
     leftMost: Vector2D;
     rightMost: Vector2D;
-    segments: Set<any>;
+    segments: Set<Edge2D>;
     maxIterations = 100;
     iterations = 0;
 
     constructor(allPoints: Vector2D[]) {
-        this.segments = new Set<any>();
+        this.segments = new Set<Edge2D>();
         this.allPoints = allPoints;
         this.hullPoints = [];
         this.leftMost = this.findLeftMostPoint();
@@ -46,6 +47,19 @@ export class QuickHull {
         }
         hull.push(this.leftMost);
         
+        const firstPoint = hull[0];
+        let previous = firstPoint;
+        let i = 0;
+        for (const point of points) {
+            if (i > 0) {
+                const startPoint = previous;
+                const endPoint = point;
+                this.segments.add(new Edge2D(startPoint,endPoint));
+            }
+            previous = point;
+            i++;
+        }
+        this.segments.add(new Edge2D(previous,firstPoint));
         this.hullPoints = hull;
     }
 
@@ -65,15 +79,15 @@ export class QuickHull {
                 if (mostDistantPoint == null) {
                     mostDistantPoint = point;
                     const lineDistance = Vector2D.distanceFromPointToLine(lineStart,mostDistantPoint,point);
-                    const startDistance = Vector2D.distanceBetweenPoints(point,lineStart);
-                    const endDistance = Vector2D.distanceBetweenPoints(point,lineEnd);
+                    const startDistance = Vector2D.euclideanDistance(point,lineStart);
+                    const endDistance = Vector2D.euclideanDistance(point,lineEnd);
                     const distance = Math.min(lineDistance,startDistance,endDistance);
 
                     greatestDistance = distance;
                 } else {
                     const lineDistance = Vector2D.distanceFromPointToLine(lineStart,mostDistantPoint,point);
-                    const startDistance = Vector2D.distanceBetweenPoints(point,lineStart);
-                    const endDistance = Vector2D.distanceBetweenPoints(point,lineEnd);
+                    const startDistance = Vector2D.euclideanDistance(point,lineStart);
+                    const endDistance = Vector2D.euclideanDistance(point,lineEnd);
                     const distance = Math.min(lineDistance,startDistance,endDistance);
 
                     if (distance > greatestDistance) {

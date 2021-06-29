@@ -1,9 +1,10 @@
 import { Utils } from "src/app/shared/utils";
-import { Vector2D } from "./vector2D";
+import { Vector2D } from "../vector2D";
+import { Edge2D } from "../edge-2d";
 
 export class BruteForceHull {
     hullPoints: Vector2D[];
-    segments: Set<any>;
+    segments: Set<Edge2D>;
 
     constructor(points: Vector2D[]) {
         this.hullPoints = [];
@@ -35,7 +36,7 @@ export class BruteForceHull {
                     const hasAntiClockwisePoints = (grouped.antiClockwise.length > 0);
                     const isOnConvexHull = Utils.exclusiveOr(hasClockwisePoints,hasAntiClockwisePoints);
                     if (isOnConvexHull) {
-                        segments.add({start: lineStart, end: lineEnd});
+                        segments.add(new Edge2D(lineStart,lineEnd));
                     }
                 }
             }
@@ -53,67 +54,17 @@ export class BruteForceHull {
                 if (i > 0) {
                     const startPoint = previous;
                     const endPoint = point;
-                    this.segments.add({start: startPoint, end: endPoint});
+                    this.segments.add(new Edge2D(startPoint,endPoint));
                 }
                 previous = point;
                 i++;
             }
-            this.segments.add({start: previous, end: firstPoint});
+            this.segments.add(new Edge2D(previous,firstPoint));
 
             // hull = points;
         }
 
         return [];
-    }
-
-    convertLineSegmentsToHull(segments: Set<any>) {
-        const handledPoints = new Set<Vector2D>();
-        const hull = [];
-        let complete = false;
-        const segmentsAsArray = Array.from(segments);
-        let noMatchingEnd = null;
-        let noMatchingStart = null;
-
-        // the first segment will have a start point with no matching previous segment
-        let firstSegment = null;
-        for (const segment of segments) {
-            const startPoint = segment.start
-            const matchingStartSegment = segmentsAsArray.find(candidate=>{
-                const xMatch = candidate.end.x == startPoint.x;
-                const yMatch = candidate.end.y == startPoint.y;
-                return (xMatch && yMatch);
-            });
-            if (matchingStartSegment == undefined) {
-                firstSegment = segment;
-                break;
-            }
-        }
-
-        let segment = firstSegment;
-
-        while (!complete) {
-
-            // add this segments start point to the hull
-            const startPoint = segment.start;
-            hull.push(startPoint);
-            const endPoint = segment.end;
-
-
-            //find a segment with a start point that matches this segments end point
-            const matchingSegment = segmentsAsArray.find(segment=>{
-                const xMatch = segment.start.x == endPoint.x;
-                const yMatch = segment.start.y == endPoint.y;
-                return (xMatch && yMatch);
-            });
-
-            // handle that segment next
-            segment = matchingSegment;
-            
-            // end the iterations once we have the right number of points
-            complete = (hull.length == segments.size);
-        }
-
-        return hull;
     }
 
 }
