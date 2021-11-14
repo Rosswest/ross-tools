@@ -293,4 +293,9 @@ static doIntersect(p1:any,q1:any,p2:any,q2:any)
         const angle = Math.acos(dot/(a.magnitude()*b.magnitude()));
         return angle
     }
+
+    public toString(): string {
+        const result = `{${this.x},${this.y}}`;
+        return result;
+    }
 }

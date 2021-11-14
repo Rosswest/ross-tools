@@ -8,6 +8,7 @@ import { GrahamScanHull } from './model/convex-hull/graham-scan-hull';
 import { DivideAndConquerHull } from './model/convex-hull/divide-and-conquer-hull';
 import { GeometryUtils } from './model/GeometryUtils';
 import { Edge2D } from './model/edge-2d';
+import { DelaunayTriangulation } from './model/triangulation/delaunay-triangulation';
 
 @Component({
   selector: 'app-geometry',
@@ -89,6 +90,19 @@ export class GeometryComponent implements OnInit {
     this.drawReadyScreen();
     this.running = false;
     this.initialised = true;
+    for (let i = 0; i < 10000000; i++) {
+      const width = this.pointsCanvas.nativeElement.width;
+      const height = this.pointsCanvas.nativeElement.height;
+      const minX = 0;
+      const minY = 0;
+      const maxX = width;
+      const maxY = height;
+      for (let i = 0; i < 10; i++) {
+        const x = Utils.randomInteger(minX,maxX);
+        const y = Utils.randomInteger(minY,maxY);
+        this.addPoint(x,y);
+      }
+    }
 
   }
 
@@ -113,19 +127,20 @@ export class GeometryComponent implements OnInit {
     const calculation = this.selectedCalculation['value'];
     const options = this.algorithmOptionsList[calculation];
     this.algorithmOptions = options;
+    this.selectedAlgorithm = this.algorithmOptions[0];
   }
 
   repaint() {
-    const width = this.pointsCanvas.nativeElement.width;
-    const height = this.pointsCanvas.nativeElement.height;
-    this.osContext.fillStyle = 'white';
-    this.osContext.fillRect(0,0,width,height);
+    // const width = this.pointsCanvas.nativeElement.width;
+    // const height = this.pointsCanvas.nativeElement.height;
+    // this.osContext.fillStyle = 'white';
+    // this.osContext.fillRect(0,0,width,height);
 
-    this.drawPoints();
-    this.drawHullSegments();
-    this.drawTriangulationEdges();
+    // this.drawPoints();
+    // this.drawHullSegments();
+    // this.drawTriangulationEdges();
 
-    this.copyToOnScreen();
+    // this.copyToOnScreen();
   }
 
   drawPoints() {
@@ -219,7 +234,8 @@ export class GeometryComponent implements OnInit {
 
   calculate() {
     this.running = true;
-    
+    console.log("Algorithm",this.selectedAlgorithm);
+    console.log("Calculation",this.selectedCalculation);
     if (this.points.length < 1) {
       this.addLog("Please add some points to the canvas before calculating");
     } else {
@@ -270,10 +286,10 @@ export class GeometryComponent implements OnInit {
 
   calculateTriangulation(points: Vector2D[]) {
     const selectedAlgorithm = this.selectedAlgorithm.value;
-    if (selectedAlgorithm == 'delaunay-triangulation') {
-      this.model = new QuickHull(points);
+    if (selectedAlgorithm == 'delaunay') {
+      this.model = new DelaunayTriangulation(points);
     }
-    this.triangulationEdges = this.model.triangulationEdges;
+    this.triangulationEdges = this.model.edges;
     console.log("triangulation edges",this.triangulationEdges);
     this.repaint();
   }

@@ -26,7 +26,7 @@ export class GrahamScanHull {
 
         const segment = new Edge2D(previousPoint,this.hullPoints[0]);
         segments.push(segment);
-        this.segments = GeometryUtils.getUniqueEdges(segments);
+        this.segments = GeometryUtils.removeEdgesWithSameStartAndEnd(segments);
     }
 
     private process(points: Vector2D[]) {

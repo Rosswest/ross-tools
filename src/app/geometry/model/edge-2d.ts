@@ -13,4 +13,10 @@ export class Edge2D {
         const difference = Vector2D.subtract(this.end,this.start);
         return difference;
     }
+
+    public toString(): string {
+        const result = `[${this.start.toString()}:${this.end.toString()}]`;
+        return result;
+
+    }
 }
